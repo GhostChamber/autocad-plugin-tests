@@ -45,28 +45,37 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcDbMgd.dll</HintPath>
     </Reference>
-    <Reference Include="acdbmgdbrep">
+    <Reference Include="acdbmgdbrep, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\acdbmgdbrep.dll</HintPath>
     </Reference>
-    <Reference Include="AcDx">
+    <Reference Include="AcDx, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcDx.dll</HintPath>
     </Reference>
     <Reference Include="AcMgd, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcMgd.dll</HintPath>
     </Reference>
-    <Reference Include="AcMr">
+    <Reference Include="AcMr, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcMr.dll</HintPath>
     </Reference>
-    <Reference Include="AcSeamless">
+    <Reference Include="AcSeamless, Version=21.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcSeamless.dll</HintPath>
     </Reference>
     <Reference Include="AcTcMgd, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcTcMgd.dll</HintPath>
     </Reference>
-    <Reference Include="AcWindows">
+    <Reference Include="AcWindows, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\inc\AcWindows.dll</HintPath>
+    </Reference>
+    <Reference Include="AdUiPalettes, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\external\inc-x64\AdUiPalettes.dll</HintPath>
     </Reference>
     <Reference Include="AdWindows, Version=2015.11.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -86,6 +95,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -96,6 +107,7 @@
   <ItemGroup>
     <Compile Include="BodyTracker.cs" />
     <Compile Include="BoundingBox.cs" />
+    <Compile Include="kinect-skeletons.cs" />
     <Compile Include="ZoomWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
