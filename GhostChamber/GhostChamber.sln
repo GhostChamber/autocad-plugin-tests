@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SamplePlugin", "SamplePlugin\SamplePlugin.vcxproj", "{425E404C-6986-4130-8F24-C5E23C3C2A7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GhostChamberPlugin", "SampleNETPlugin\GhostChamberPlugin.csproj", "{2F3A90E0-3EDC-4696-B34C-3BF469F336FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GhostChamberPlugin", "GhostChamberPlugin\GhostChamberPlugin.csproj", "{2F3A90E0-3EDC-4696-B34C-3BF469F336FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
