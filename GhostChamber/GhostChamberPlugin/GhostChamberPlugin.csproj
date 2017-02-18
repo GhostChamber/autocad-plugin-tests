@@ -7,8 +7,8 @@
     <ProjectGuid>{2F3A90E0-3EDC-4696-B34C-3BF469F336FA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SampleNETPlugin</RootNamespace>
-    <AssemblyName>SampleNETPlugin</AssemblyName>
+    <RootNamespace>GhostChamberPlugin</RootNamespace>
+    <AssemblyName>GhostChamberPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
