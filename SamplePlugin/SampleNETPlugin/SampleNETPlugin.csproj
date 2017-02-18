@@ -107,7 +107,7 @@
   <ItemGroup>
     <Compile Include="BodyTracker.cs" />
     <Compile Include="BoundingBox.cs" />
-    <Compile Include="kinect-skeletons.cs" />
+    <Compile Include="KinectSkeletons.cs" />
     <Compile Include="ZoomWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
