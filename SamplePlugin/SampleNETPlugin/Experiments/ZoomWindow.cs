@@ -5,9 +5,9 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Interop;
 
-namespace ZoomZoom
+namespace GhostChamberPlugin.Experiments
 {
-	public class Commands
+	public class ZoomCommands
 	{
 		// Zoom to a window specified by the user
 

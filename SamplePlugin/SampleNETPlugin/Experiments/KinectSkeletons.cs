@@ -8,7 +8,7 @@ using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
 using Microsoft.Kinect;
 
-namespace KinectSkeletons
+namespace GhostChamberPlugin.Experiment
 {
   public class KinectSkeletonJig : DrawJig, IDisposable
   {
@@ -311,7 +311,7 @@ namespace KinectSkeletons
     }
   }
 
-  public class Commands
+  public class SkeletonCommands
   {
     [CommandMethod("ADNPLUGINS", "KINSKEL", CommandFlags.Modal)]
     public void KinectSkeletons()
