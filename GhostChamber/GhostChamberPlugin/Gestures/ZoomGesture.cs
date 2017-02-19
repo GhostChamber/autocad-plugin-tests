@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace GhostChamberPlugin.Gestures
 {
-	public sealed class ZoomGesture
+	public sealed class ZoomGesture : Gesture
 	{
 		private GestureType gestureType;
 		private bool[] zooming;
@@ -18,7 +18,7 @@ namespace GhostChamberPlugin.Gestures
 		private double maxHandDistance = 0.85;
 		private Microsoft.Kinect.Body activeBody = null;
 		private double zoomRightStart;
-		private Experiments.Camera cam = new Experiments.Camera(Application.DocumentManager.MdiActiveDocument);
+		private Commands.Camera cam = new Commands.Camera(Application.DocumentManager.MdiActiveDocument);
 		double currentZoom = 1.0;
 
 		public void HandleZoomGesture(IList<Body> skeletons, int bodyCount)
@@ -91,6 +91,11 @@ namespace GhostChamberPlugin.Gestures
 					}
 				}
 			}
+		}
+
+		public bool IsActive()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

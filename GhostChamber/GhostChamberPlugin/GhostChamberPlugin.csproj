@@ -106,9 +106,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandGestureBindings\CommandGestureBinding.cs" />
+    <Compile Include="Commands\OrbitCommand.cs" />
+    <Compile Include="Commands\PanCommand.cs" />
+    <Compile Include="Commands\ZoomCommand.cs" />
     <Compile Include="Experiments\BodyTracker.cs" />
     <Compile Include="Experiments\BoundingBox.cs" />
-    <Compile Include="Experiments\Camera.cs" />
+    <Compile Include="Commands\Camera.cs" />
+    <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureType.cs" />
     <Compile Include="Gestures\GrabGesture.cs" />
     <Compile Include="Gestures\PanGesture.cs" />
@@ -119,10 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MathUtils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CommandGestureBindings\" />
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

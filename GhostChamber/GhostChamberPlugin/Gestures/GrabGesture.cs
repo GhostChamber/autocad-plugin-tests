@@ -2,7 +2,11 @@
 
 namespace GhostChamberPlugin.Gestures
 {
-	class GrabGesture
+	class GrabGesture : Gesture
 	{
+		public bool IsActive()
+		{
+			return false;
+		}
 	}
 }
