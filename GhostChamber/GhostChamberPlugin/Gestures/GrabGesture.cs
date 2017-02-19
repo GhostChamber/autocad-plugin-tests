@@ -2,7 +2,7 @@
 
 namespace GhostChamberPlugin.Gestures
 {
-	class ZoomGestures
+	class GrabGesture
 	{
 	}
 }
