@@ -6,7 +6,6 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
-using Autodesk.AutoCAD.Interop;
 using Microsoft.Kinect;
 
 namespace GhostChamberPlugin.Experiment
@@ -58,15 +57,12 @@ namespace GhostChamberPlugin.Experiment
         private float zoomRight = 0.0f;
         private bool zoomRightCaptured = false;
         private const float ZOOM_SCALE = 10.0f;
-	    private double currentWidth = 1.0;
-		private double currentHeight = 1.0;
 	    private double minHandDistance = 0.15;
 		private double maxHandDistance = 0.85;
 		private Microsoft.Kinect.Body activeBody = null;
-	    private Point2d centerPoint;
-		private ViewTableRecord view;
-	    private Editor editor;
 	    private double zoomRightStart;
+		private Experiments.Camera cam = new Experiments.Camera(Application.DocumentManager.MdiActiveDocument);
+		double currentZoom = 1.0;
 
 		public KinectSkeletonJig()
         {
@@ -143,17 +139,9 @@ namespace GhostChamberPlugin.Experiment
                         zoomLeft = body.Joints[JointType.HandLeft].Position.X;
                         activeBody = body;
                         zooming[i] = true;
-
-						Document doc = Application.DocumentManager.MdiActiveDocument;
-						Database db = doc.Database;
-						editor = doc.Editor;
-						view = editor.GetCurrentView();
-	                    currentWidth = view.Width;
-	                    currentHeight = view.Height;
-	                    centerPoint = view.CenterPoint;
-	                    editor.WriteMessage($"Width = {currentWidth}, Height = {currentHeight}\n");
+	                    currentZoom = 1.0;
                     }
-                    else
+					else
                     {
                         zooming[i] = false;
                     }
@@ -180,25 +168,19 @@ namespace GhostChamberPlugin.Experiment
 	                handDistance = Math.Abs(handDistance);
 	                handDistance = Clamp(handDistance, minHandDistance, maxHandDistance);
 
-					double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance)) + 0.1;
-	                zoomFraction = Clamp(zoomFraction, 0.1, 1.0);
+					double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance));
+					if (zoomOut)
+	                {
+		                zoomFraction += 1;
+	                }
+	                else
+	                {
+		                zoomFraction = 1 - zoomFraction;
+	                }
+					cam.Zoom(zoomFraction / currentZoom);
+					currentZoom = zoomFraction;
 
-					// Scale up zoom fraction by the ZOOM scale
-	                zoomFraction *= ZOOM_SCALE;
-
-					double xRange = (zoomOut ? (currentWidth / zoomFraction) : (currentWidth * zoomFraction)) / 2;
-					double yRange = (zoomOut ? (currentHeight / zoomFraction) : (currentHeight * zoomFraction)) / 2;
-					editor.WriteMessage($"HandDistance = {handDistance}\n");
-
-                    Point2d min2d = new Point2d(centerPoint.X - xRange, centerPoint.Y - yRange);
-                    Point2d max2d = new Point2d(centerPoint.X + xRange, centerPoint.Y + yRange);
-
-	                view.CenterPoint = centerPoint;
-					view.Height = max2d.Y - min2d.Y;
-					view.Width = max2d.X - min2d.X;
-					editor.SetCurrentView(view);
-
-                    if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
+					if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
                     {
                         gestureState = GestureState.NONE;
                         zoomRightCaptured = false;
