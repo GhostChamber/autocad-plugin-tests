@@ -58,9 +58,17 @@ namespace GhostChamberPlugin.Experiment
         private float zoomRight = 0.0f;
         private bool zoomRightCaptured = false;
         private const float ZOOM_SCALE = 10.0f;
-        private Microsoft.Kinect.Body activeBody = null;
+	    private double currentWidth = 1.0;
+		private double currentHeight = 1.0;
+	    private double minHandDistance = 0.15;
+		private double maxHandDistance = 0.85;
+		private Microsoft.Kinect.Body activeBody = null;
+	    private Point2d centerPoint;
+		private ViewTableRecord view;
+	    private Editor editor;
+	    private double zoomRightStart;
 
-        public KinectSkeletonJig()
+		public KinectSkeletonJig()
         {
             // Initialise members
 
@@ -116,6 +124,7 @@ namespace GhostChamberPlugin.Experiment
 
         protected void HandleZoomGesture()
         {
+
             if (gestureState == GestureState.NONE && _skeletons != null)
             {
                 if (zooming == null)
@@ -127,17 +136,22 @@ namespace GhostChamberPlugin.Experiment
                 {
                     Microsoft.Kinect.Body body = _skeletons[i];
 
-                    //Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
-                    //ed.WriteMessage($"Head Y: {_skeletons[i].Joints[JointType.Head].Position.Y}\n");
-
                     if (body.Joints[JointType.Head].Position.Y != 0.0f &&
-                        (Math.Abs(body.Joints[JointType.HandLeft].Position.Y - 
-                        body.Joints[JointType.Head].Position.Y) < 0.2f))
+						(Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < 0.2f))
                     {
                         gestureState = GestureState.ZOOMING;
                         zoomLeft = body.Joints[JointType.HandLeft].Position.X;
                         activeBody = body;
                         zooming[i] = true;
+
+						Document doc = Application.DocumentManager.MdiActiveDocument;
+						Database db = doc.Database;
+						editor = doc.Editor;
+						view = editor.GetCurrentView();
+	                    currentWidth = view.Width;
+	                    currentHeight = view.Height;
+	                    centerPoint = view.CenterPoint;
+	                    editor.WriteMessage($"Width = {currentWidth}, Height = {currentHeight}\n");
                     }
                     else
                     {
@@ -147,61 +161,65 @@ namespace GhostChamberPlugin.Experiment
             }
             else if (gestureState == GestureState.ZOOMING)
             {
-                if (activeBody != null && 
-                    !zoomRightCaptured)
+                if (activeBody != null && !zoomRightCaptured)
                 {
-                    if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y -
-                        activeBody.Joints[JointType.Head].Position.Y) < 0.2f)
+                    if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < 0.2f)
                     {
                         zoomRightCaptured = true;
-                        zoomRight = activeBody.Joints[JointType.HandRight].Position.X;
-                    }
+						zoomRightStart = activeBody.Joints[JointType.HandRight].Position.X;
+					}
                 }
 
-                if (activeBody != null &&
-                    zoomRightCaptured)
+                if (activeBody != null && zoomRightCaptured)
                 {
-                    float zoomRight = activeBody.Joints[JointType.HandRight].Position.X;
-                    float xRange = ZOOM_SCALE * Math.Abs(zoomLeft - zoomRight);
-                    float yRange = xRange;
+					zoomRight = activeBody.Joints[JointType.HandRight].Position.X;
+					
+					// kinect units are in meters. Hence left - right is scaled from minHandDistance to maxHandDistance
+	                double handDistance = (zoomRightStart - zoomRight);
+	                bool zoomOut = (handDistance < 0);
+	                handDistance = Math.Abs(handDistance);
+	                handDistance = Clamp(handDistance, minHandDistance, maxHandDistance);
 
-                    float x = 0.0f;
-                    float y = 0.0f;
+					double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance)) + 0.1;
+	                zoomFraction = Clamp(zoomFraction, 0.1, 1.0);
 
+					// Scale up zoom fraction by the ZOOM scale
+	                zoomFraction *= ZOOM_SCALE;
 
-                    Document doc =
-                        Application.DocumentManager.MdiActiveDocument;
-                    Database db = doc.Database;
-                    Editor ed = doc.Editor;
+					double xRange = (zoomOut ? (currentWidth / zoomFraction) : (currentWidth * zoomFraction)) / 2;
+					double yRange = (zoomOut ? (currentHeight / zoomFraction) : (currentHeight * zoomFraction)) / 2;
+					editor.WriteMessage($"HandDistance = {handDistance}\n");
 
-                    Point2d min2d = new Point2d(x - xRange, y - yRange);
-                    Point2d max2d = new Point2d(x + xRange, y + yRange);
+                    Point2d min2d = new Point2d(centerPoint.X - xRange, centerPoint.Y - yRange);
+                    Point2d max2d = new Point2d(centerPoint.X + xRange, centerPoint.Y + yRange);
 
-                    ViewTableRecord view =
-                      new ViewTableRecord();
+	                view.CenterPoint = centerPoint;
+					view.Height = max2d.Y - min2d.Y;
+					view.Width = max2d.X - min2d.X;
+					editor.SetCurrentView(view);
 
-                    view.CenterPoint = new Point2d(0.0f, 0.0f);
-                    view.Width = xRange;
-                    view.Height = yRange;
-                    //view.CenterPoint =
-                    //  min2d + ((max2d - min2d) / 2.0);
-                    //view.Height = max2d.Y - min2d.Y;
-                    //view.Width = max2d.X - min2d.X;
-                    ed.SetCurrentView(view);
-
-
-                    if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y -
-                        activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
+                    if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
                     {
                         gestureState = GestureState.NONE;
-                        zoomLeft = 0.0f;
-                        zoomRight = 0.0f;
                         zoomRightCaptured = false;
                         activeBody = null;
                     }
                 }
             }
         }
+
+	    private double Clamp(double a, double min, double max)
+	    {
+		    if (a < min)
+		    {
+			    return min;
+		    }
+			if (a > max)
+		    {
+			    return max;
+		    }
+		    return a;
+	    }
 
         protected override SamplerStatus Sampler(JigPrompts prompts)
         {
@@ -222,7 +240,7 @@ namespace GhostChamberPlugin.Experiment
 
                     // Clear any previous lines
 
-                    ClearLines();
+                    //ClearLines();
 
                     var frame = _frameReader.AcquireLatestFrame();
                     if (frame != null)
@@ -261,7 +279,7 @@ namespace GhostChamberPlugin.Experiment
                             // Add skeleton vectors for tracked/positioned
                             // skeletons
 
-                            AddLinesForSkeleton(_lines, skel, col++, index);
+                            //AddLinesForSkeleton(_lines, skel, col++, index);
                             index++;
                         }
                         _capturing = false;
@@ -313,10 +331,7 @@ namespace GhostChamberPlugin.Experiment
         }
 
         // Translate from Skeleton Space to WCS
-
-        internal static Point3d PointFromVector(
-          CameraSpacePoint p, bool flip = true
-        )
+        internal static Point3d PointFromVector(CameraSpacePoint p, bool flip = true)
         {
             // Rather than just return a point, we're effectively
             // transforming it to the drawing space: flipping the
@@ -329,41 +344,30 @@ namespace GhostChamberPlugin.Experiment
             return new Point3d(flip ? -p.X : p.X, p.Z, p.Y);
         }
 
-        private void AddLinesForSkeleton(
-          List<Line> lines, Microsoft.Kinect.Body sk, int idx, int index
-        )
+        private void AddLinesForSkeleton(List<Line> lines, Microsoft.Kinect.Body sk, int idx, int index)
         {
             // Hard-code lists of connections between joints
-
-            var links =
-              new int[][]
-              {
-          // Head to left toe
-          new int[] { 3, 2, 20, 1, 0, 12, 13, 14, 15 },
-          // Hips to right toe
-          new int[] { 0, 16, 17, 18, 19 },
-          // Left hand to right hand
-          new int[] { 21, 7, 6, 5, 4, 2, 8, 9, 10, 11, 23 },
-          // Left thumb to palm
-          new int[] { 22, 7 },
-          // Right thumb to palm
-          new int[] { 24, 11 }
-              };
+			var links = new int[][] {
+				// Head to left toe
+				new int[] { 3, 2, 20, 1, 0, 12, 13, 14, 15 },
+				// Hips to right toe
+				new int[] { 0, 16, 17, 18, 19 },
+				// Left hand to right hand
+				new int[] { 21, 7, 6, 5, 4, 2, 8, 9, 10, 11, 23 },
+				// Left thumb to palm
+				new int[] { 22, 7 },
+				// Right thumb to palm
+				new int[] { 24, 11 }
+			};
 
             // Populate an array of joints
-
             var joints = new Point3dCollection();
             for (int i = 0; i < sk.Joints.Count; i++)
             {
-                joints.Add(
-                  PointFromVector(
-                    sk.Joints[(JointType)i].Position, false
-                  )
-                );
+                joints.Add(PointFromVector(sk.Joints[(JointType)i].Position, false));
             }
 
             // For each path of joints, create a sequence of lines
-
             int limit = sk.Joints.Count - 1;
 
             foreach (int[] link in links)
@@ -372,23 +376,15 @@ namespace GhostChamberPlugin.Experiment
                 {
                     // Only add lines where links are within bounds
                     // (check needed for seated mode)
+                    int first = link[i], second = link[i + 1];
 
-                    int first = link[i],
-                        second = link[i + 1];
-
-                    if (
-                      isValidJoint(first, limit) &&
-                      isValidJoint(second, limit)
-                    )
+                    if (isValidJoint(first, limit) && isValidJoint(second, limit))
                     {
                         // Line from this vertex to the next
-
                         var ln = new Line(joints[first], joints[second]);
 
                         // Set the color to distinguish between skeletons
-
-                        if (zooming != null && 
-                            zooming[index])
+                        if (zooming != null && zooming[index])
                         {
                             ln.ColorIndex = 4;
                         }
@@ -398,13 +394,7 @@ namespace GhostChamberPlugin.Experiment
                         }
 
                         // Make tracked skeletons bolder
-
-                        ln.LineWeight =
-                          (sk.IsTracked ?
-                            LineWeight.LineWeight050 :
-                            LineWeight.LineWeight000
-                          );
-
+                        ln.LineWeight = (sk.IsTracked ? LineWeight.LineWeight050 : LineWeight.LineWeight000);
                         lines.Add(ln);
                     }
                 }
@@ -415,14 +405,12 @@ namespace GhostChamberPlugin.Experiment
         {
             // A joint is valid if it indexes into the collection
             // and if it's above the spine in near mode
-
             return id <= upperLimit && (!_nearMode || id > 1);
         }
 
         private void ClearLines()
         {
             // Dispose each of the lines and clear the list
-
             foreach (Line ln in _lines)
             {
                 ln.Dispose();
@@ -436,23 +424,18 @@ namespace GhostChamberPlugin.Experiment
         [CommandMethod("ADNPLUGINS", "KINSKEL", CommandFlags.Modal)]
         public void KinectSkeletons()
         {
-            var ed =
-                Application.DocumentManager.MdiActiveDocument.Editor;
-
+            var editor = Application.DocumentManager.MdiActiveDocument.Editor;
             try
             {
                 // Create and use our jig, disposing afterwards
-
                 using (var sj = new KinectSkeletonJig())
                 {
-                    ed.Drag(sj);
+                    editor.Drag(sj);
                 }
             }
             catch (System.Exception ex)
             {
-                ed.WriteMessage(
-                    "\nUnable to start Kinect sensor: " + ex.Message
-                );
+                editor.WriteMessage("\nUnable to start Kinect sensor: " + ex.Message);
             }
         }
     }
