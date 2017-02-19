@@ -74,7 +74,7 @@ namespace GhostChamberPlugin
 						if (binding.Value.IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
 						{
 							_currentGesture = binding.Key;
-							Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
+							//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
 							break;
 						}
 					}
@@ -86,7 +86,7 @@ namespace GhostChamberPlugin
 					if (!_gestureMapping[_currentGesture].IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
 					{
 						_currentGesture = GestureType.NONE;
-						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
+						//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
 					}
 				}
 

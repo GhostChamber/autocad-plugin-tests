@@ -8,22 +8,19 @@ namespace GhostChamberPlugin.Gestures
 {
 	public sealed class ZoomGesture : Gesture
 	{
-		private float zoomRight = 0.0f;
+		private Microsoft.Kinect.Body activeBody = null;
 		private double minHandDistance = 0.15;
 		private double maxHandDistance = 0.85;
-		private double zoomRightStart;
 		private double currentZoom = 1.0;
+		private float zoomScale = 1.0f;
 		private bool zoomRightCaptured = false;
-		private Microsoft.Kinect.Body activeBody = null;
+		private double zoomRightStart;
+		private float zoomRight;
 
 		public bool IsActive(IList<Body> skeletons, int bodyCount)
 		{
-			// TODO: activeBody is being set to null at the end of Update method.
-			// But for some reason we still had to loop through all the bodies every frame to detect end of gesture
-			// Find a way to avoid this
-			if (skeletons != null)
+			if (activeBody == null && skeletons != null)
 			{
-				bool activeBodyFound = false;
 				for (int i = 0; i < bodyCount; i++)
 				{
 					Microsoft.Kinect.Body body = skeletons[i];
@@ -32,15 +29,9 @@ namespace GhostChamberPlugin.Gestures
 					{
 						activeBody = body;
 						currentZoom = 1.0;
-						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Activated\n");
-						activeBodyFound = true;
+						//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Activated\n");
 						break;
 					}
-				}
-				if (!activeBodyFound)
-				{
-					activeBody = null;
-					zoomRightCaptured = false;
 				}
 			}
 			return (activeBody != null);
@@ -70,11 +61,11 @@ namespace GhostChamberPlugin.Gestures
 				double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance));
 				if (zoomOut)
 				{
-					zoomFraction = 1 - zoomFraction;
+					zoomFraction = (1 - zoomFraction*zoomScale);
 				}
 				else
 				{
-					zoomFraction += 1;
+					zoomFraction = (1 + zoomFraction*zoomScale);
 				}
 				double returnValue = (zoomFraction / currentZoom);
 				currentZoom = zoomFraction;
@@ -83,7 +74,7 @@ namespace GhostChamberPlugin.Gestures
 				{
 					zoomRightCaptured = false;
 					activeBody = null;
-					Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Deactivated\n");
+					//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Deactivated\n");
 				}
 				return returnValue;
 			}
