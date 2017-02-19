@@ -1,6 +1,7 @@
 ﻿using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Gestures
 {
@@ -34,7 +35,7 @@ namespace GhostChamberPlugin.Gestures
                 {
                     if(isCommandPositionActive(activeBody, 0.2f) && isJointLessThan(activeBody, JointType.HandTipRight, JointType.ThumbRight))
                     {
-                        Editor.WriteString("Made it PAN");
+						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Made it PAN");
                     }
                 }
 
