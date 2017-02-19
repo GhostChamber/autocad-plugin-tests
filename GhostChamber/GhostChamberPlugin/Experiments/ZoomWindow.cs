@@ -4,13 +4,93 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Interop;
+using System;
 
 namespace GhostChamberPlugin.Experiments
 {
 	public class ZoomCommands
 	{
-		// Zoom to a window specified by the user
+		[CommandMethod("ZIN")]
+		public void ZoomIn()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Zoom(0.9);
+		}
 
+		[CommandMethod("ZOUT")]
+		public void ZoomOut()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Zoom(1.1);
+		}
+
+		[CommandMethod("PLEFT")]
+		public void PanLeft()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Pan(-1, 0);
+		}
+
+		[CommandMethod("PRIGHT")]
+		public void PanRight()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Pan(1, 0);
+		}
+
+		[CommandMethod("PUP")]
+		public void PanUp()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Pan(0, 1);
+		}
+
+		[CommandMethod("PDOWN")]
+		public void PanDown()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Pan(0, -1);
+		}
+
+		[CommandMethod("OLEFT")]
+		public void OrbitLeft()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Orbit(Vector3d.ZAxis, Math.PI / 12);
+		}
+
+		[CommandMethod("ORIGHT")]
+		public void OrbitRight()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Orbit(Vector3d.ZAxis, -Math.PI / 12);
+		}
+
+		[CommandMethod("OUP")]
+		public void OrbitUp()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Orbit(Vector3d.XAxis, Math.PI / 12);
+		}
+
+		[CommandMethod("ODOWN")]
+		public void OrbitDown()
+		{
+			var cam =
+			  new Camera(Application.DocumentManager.MdiActiveDocument);
+			cam.Orbit(Vector3d.XAxis, -Math.PI / 12);
+		}
+
+		// Zoom to a window specified by the user
 		[CommandMethod("ZW")]
 		static public void ZoomWindow()
 		{
@@ -106,7 +186,7 @@ namespace GhostChamberPlugin.Experiments
 		}
 
 		[CommandMethod("GHOSTLEFT")]
-		static public void PanLeft()
+		static public void GhostPanLeft()
 		{
 			Document doc =
 			  Application.DocumentManager.MdiActiveDocument;
@@ -120,7 +200,7 @@ namespace GhostChamberPlugin.Experiments
 		}
 
 		[CommandMethod("GHOSTRIGHT")]
-		static public void PanRight()
+		static public void GhostPanRight()
 		{
 			Document doc =
 			  Application.DocumentManager.MdiActiveDocument;

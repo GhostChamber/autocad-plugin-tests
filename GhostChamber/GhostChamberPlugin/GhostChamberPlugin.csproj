@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="Experiments\BodyTracker.cs" />
     <Compile Include="Experiments\BoundingBox.cs" />
+    <Compile Include="Experiments\Camera.cs" />
     <Compile Include="Gestures\GrabGestures.cs" />
     <Compile Include="Gestures\PanGestures.cs" />
     <Compile Include="Gestures\ZoomGestures.cs" />
