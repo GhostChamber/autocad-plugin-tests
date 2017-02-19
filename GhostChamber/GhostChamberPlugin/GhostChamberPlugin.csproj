@@ -115,6 +115,7 @@
     <Compile Include="Gestures\ZoomGesture.cs" />
     <Compile Include="Experiments\KinectSkeletons.cs" />
     <Compile Include="Experiments\ZoomWindow.cs" />
+    <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MathUtils.cs" />
   </ItemGroup>
