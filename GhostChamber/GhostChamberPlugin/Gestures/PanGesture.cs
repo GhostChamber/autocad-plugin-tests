@@ -2,7 +2,7 @@
 
 namespace GhostChamberPlugin.Gestures
 {
-	class PanGestures
+	class PanGesture
 	{
 	}
 }
