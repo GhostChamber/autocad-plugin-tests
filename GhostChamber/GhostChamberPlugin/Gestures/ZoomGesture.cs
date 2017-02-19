@@ -8,94 +8,86 @@ namespace GhostChamberPlugin.Gestures
 {
 	public sealed class ZoomGesture : Gesture
 	{
-		private GestureType gestureType;
-		private bool[] zooming;
-		private float zoomLeft = 0.0f;
 		private float zoomRight = 0.0f;
-		private bool zoomRightCaptured = false;
-		private const float ZOOM_SCALE = 10.0f;
 		private double minHandDistance = 0.15;
 		private double maxHandDistance = 0.85;
-		private Microsoft.Kinect.Body activeBody = null;
 		private double zoomRightStart;
-		private Commands.Camera cam = new Commands.Camera(Application.DocumentManager.MdiActiveDocument);
-		double currentZoom = 1.0;
+		private double currentZoom = 1.0;
+		private bool zoomRightCaptured = false;
+		private Microsoft.Kinect.Body activeBody = null;
 
-		public void HandleZoomGesture(IList<Body> skeletons, int bodyCount)
+		public bool IsActive(IList<Body> skeletons, int bodyCount)
 		{
-
-			if (gestureType == GestureType.NONE && skeletons != null)
+			// TODO: activeBody is being set to null at the end of Update method.
+			// But for some reason we still had to loop through all the bodies every frame to detect end of gesture
+			// Find a way to avoid this
+			if (skeletons != null)
 			{
-				if (zooming == null)
-				{
-					zooming = new bool[bodyCount];
-				}
-
+				bool activeBodyFound = false;
 				for (int i = 0; i < bodyCount; i++)
 				{
 					Microsoft.Kinect.Body body = skeletons[i];
-
 					if (body.Joints[JointType.Head].Position.Y != 0.0f &&
 						(Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < 0.2f))
 					{
-						gestureType = GestureType.ZOOM;
-						zoomLeft = body.Joints[JointType.HandLeft].Position.X;
 						activeBody = body;
-						zooming[i] = true;
 						currentZoom = 1.0;
+						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Activated\n");
+						activeBodyFound = true;
+						break;
 					}
-					else
-					{
-						zooming[i] = false;
-					}
+				}
+				if (!activeBodyFound)
+				{
+					activeBody = null;
+					zoomRightCaptured = false;
 				}
 			}
-			else if (gestureType == GestureType.ZOOM)
-			{
-				if (activeBody != null && !zoomRightCaptured)
-				{
-					if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < 0.2f)
-					{
-						zoomRightCaptured = true;
-						zoomRightStart = activeBody.Joints[JointType.HandRight].Position.X;
-					}
-				}
-
-				if (activeBody != null && zoomRightCaptured)
-				{
-					zoomRight = activeBody.Joints[JointType.HandRight].Position.X;
-
-					// kinect units are in meters. Hence left - right is scaled from minHandDistance to maxHandDistance
-					double handDistance = (zoomRightStart - zoomRight);
-					bool zoomOut = (handDistance < 0);
-					handDistance = Math.Abs(handDistance);
-					handDistance = handDistance.Clamp(minHandDistance, maxHandDistance);
-
-					double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance));
-					if (zoomOut)
-					{
-						zoomFraction += 1;
-					}
-					else
-					{
-						zoomFraction = 1 - zoomFraction;
-					}
-					cam.Zoom(zoomFraction / currentZoom);
-					currentZoom = zoomFraction;
-
-					if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
-					{
-						gestureType = GestureType.NONE;
-						zoomRightCaptured = false;
-						activeBody = null;
-					}
-				}
-			}
+			return (activeBody != null);
 		}
 
-		public bool IsActive()
+		public double Update(IList<Body> skeletons, int bodyCount)
 		{
-			throw new NotImplementedException();
+			if (activeBody != null && !zoomRightCaptured)
+			{
+				if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < 0.2f)
+				{
+					zoomRightCaptured = true;
+					zoomRightStart = activeBody.Joints[JointType.HandRight].Position.X;
+				}
+			}
+
+			if (activeBody != null && zoomRightCaptured)
+			{
+				zoomRight = activeBody.Joints[JointType.HandRight].Position.X;
+
+				// kinect units are in meters. Hence left - right is scaled from minHandDistance to maxHandDistance
+				double handDistance = (zoomRightStart - zoomRight);
+				bool zoomOut = (handDistance < 0);
+				handDistance = Math.Abs(handDistance);
+				handDistance = handDistance.Clamp(minHandDistance, maxHandDistance);
+
+				double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance));
+				if (zoomOut)
+				{
+					zoomFraction += 1;
+				}
+				else
+				{
+					zoomFraction = 1 - zoomFraction;
+				}
+				double returnValue = (zoomFraction / currentZoom);
+				currentZoom = zoomFraction;
+
+				if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
+				{
+					zoomRightCaptured = false;
+					activeBody = null;
+					Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Deactivated\n");
+				}
+				return returnValue;
+			}
+			return 1;
 		}
 	}
 }

@@ -9,10 +9,6 @@ namespace GhostChamberPlugin.Gestures
 	{
         private GestureType gestureType;
         private Body activeBody = null;
-		public bool IsActive()
-		{
-			return false;
-		}
 
 		public void HandlePanGesture( IList<Body> skeletons,int bodyCount )
         {
@@ -84,5 +80,10 @@ namespace GhostChamberPlugin.Gestures
             gestureType = GestureType.NONE;
             activeBody = null;
         }
+
+		public bool IsActive(IList<Body> skeletons, int bodyCount)
+		{
+			return false;
+		}
 	}
 }

@@ -5,7 +5,7 @@ using Autodesk.AutoCAD.Runtime;
 
 namespace GhostChamberPlugin.Commands
 {
-	class OrbitCommand
+	public class OrbitCommand
 	{
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
@@ -15,7 +15,7 @@ namespace GhostChamberPlugin.Commands
 			camera.Orbit(axis, angle);
 		}
 
-		[CommandMethod("GHOSTPLUGINS", "GHOSTPAN", CommandFlags.Modal)]
+		[CommandMethod("GHOSTPLUGINS", "GHOSTORBIT", CommandFlags.Modal)]
 		public void Command()
 		{
 			string axisName = editor.GetString("Orbit Axis: ").StringResult;

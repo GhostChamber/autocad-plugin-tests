@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandGestureBindings\CommandGestureBinding.cs" />
+    <Compile Include="CommandGestureBindings\ZoomBinding.cs" />
     <Compile Include="Commands\OrbitCommand.cs" />
     <Compile Include="Commands\PanCommand.cs" />
     <Compile Include="Commands\ZoomCommand.cs" />

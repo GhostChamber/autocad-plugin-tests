@@ -4,7 +4,7 @@ using Autodesk.AutoCAD.Runtime;
 
 namespace GhostChamberPlugin.Commands
 {
-	class PanCommand
+	public class PanCommand
 	{
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;

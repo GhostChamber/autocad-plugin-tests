@@ -6,6 +6,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
+using GhostChamberPlugin.CommandGestureBindings;
 using GhostChamberPlugin.Gestures;
 using Microsoft.Kinect;
 
@@ -27,7 +28,11 @@ namespace GhostChamberPlugin
 			get { return _nearMode; }
 		}
 
-		private ZoomGesture _zoom = new ZoomGesture();
+		private GestureType _currentGesture = GestureType.NONE;
+		private Dictionary<GestureType, CommandGestureBinding> _gestureMapping = new Dictionary<GestureType, CommandGestureBinding>()
+		{
+			{GestureType.ZOOM, new ZoomBinding()}
+		};
 
 		public PluginMain()
 		{
@@ -62,7 +67,28 @@ namespace GhostChamberPlugin
 			var ppr = prompts.AcquirePoint(opts);
 			if (ppr.Status == PromptStatus.OK)
 			{
-				_zoom.HandleZoomGesture(_skeletons, _kinect.BodyFrameSource.BodyCount);
+				if (_currentGesture == GestureType.NONE)
+				{
+					foreach (var binding in _gestureMapping)
+					{
+						if (binding.Value.IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
+						{
+							_currentGesture = binding.Key;
+							Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
+							break;
+						}
+					}
+				}
+
+				if (_currentGesture != GestureType.NONE)
+				{
+					_gestureMapping[_currentGesture].Update(_skeletons, _kinect.BodyFrameSource.BodyCount);
+					if (!_gestureMapping[_currentGesture].IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
+					{
+						_currentGesture = GestureType.NONE;
+						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
+					}
+				}
 
 				var frame = _frameReader.AcquireLatestFrame();
 				if (frame != null)
@@ -108,7 +134,7 @@ namespace GhostChamberPlugin
 	public class GhostCommands
 	{
 		[CommandMethod("GHOSTPLUGINS", "GHOSTGO", CommandFlags.Modal)]
-		public void KinectSkeletons()
+		public void GhostPluginStart()
 		{
 			var editor = Application.DocumentManager.MdiActiveDocument.Editor;
 			try
