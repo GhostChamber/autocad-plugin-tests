@@ -70,11 +70,11 @@ namespace GhostChamberPlugin.Gestures
 				double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance));
 				if (zoomOut)
 				{
-					zoomFraction += 1;
+					zoomFraction = 1 - zoomFraction;
 				}
 				else
 				{
-					zoomFraction = 1 - zoomFraction;
+					zoomFraction += 1;
 				}
 				double returnValue = (zoomFraction / currentZoom);
 				currentZoom = zoomFraction;
