@@ -4,10 +4,9 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Geometry;
 using System.Collections.Generic;
-using System.Linq;
 using System;
 
-namespace MinimumEnclosingBoundary
+namespace GhostChamberPlugin.Experiments
 {
 	public class Commands
 	{

@@ -5,9 +5,9 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Interop;
 
-namespace ZoomZoom
+namespace GhostChamberPlugin.Experiments
 {
-	public class Commands
+	public class ZoomCommands
 	{
 		// Zoom to a window specified by the user
 
@@ -103,6 +103,34 @@ namespace ZoomZoom
 			// use different zoom techniques]
 
 			ZoomWin(ed, ext.MinPoint, ext.MaxPoint);
+		}
+
+		[CommandMethod("GHOSTLEFT")]
+		static public void PanLeft()
+		{
+			Document doc =
+			  Application.DocumentManager.MdiActiveDocument;
+			Database db = doc.Database;
+			Editor ed = doc.Editor;
+
+			// get editor view coords
+			ViewTableRecord record = ed.GetCurrentView();
+			record.CenterPoint = new Point2d(record.CenterPoint.X - 5, record.CenterPoint.Y);
+			ed.SetCurrentView(record);
+		}
+
+		[CommandMethod("GHOSTRIGHT")]
+		static public void PanRight()
+		{
+			Document doc =
+			  Application.DocumentManager.MdiActiveDocument;
+			Database db = doc.Database;
+			Editor ed = doc.Editor;
+
+			// get editor view coords
+			ViewTableRecord record = ed.GetCurrentView();
+			record.CenterPoint = new Point2d(record.CenterPoint.X + 5, record.CenterPoint.Y);
+			ed.SetCurrentView(record);
 		}
 
 		// Helper functions to zoom using different techniques

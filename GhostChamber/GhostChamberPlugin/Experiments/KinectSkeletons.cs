@@ -9,7 +9,7 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Interop;
 using Microsoft.Kinect;
 
-namespace KinectSkeletons
+namespace GhostChamberPlugin.Experiment
 {
     public enum GestureState
     {
@@ -431,13 +431,13 @@ namespace KinectSkeletons
         }
     }
 
-    public class Commands
+    public class SkeletonCommands
     {
-        [CommandMethod("ADNPLUGINS", "KINSKEL", CommandFlags.Transparent)]
+        [CommandMethod("ADNPLUGINS", "KINSKEL", CommandFlags.Modal)]
         public void KinectSkeletons()
         {
             var ed =
-              Application.DocumentManager.MdiActiveDocument.Editor;
+                Application.DocumentManager.MdiActiveDocument.Editor;
 
             try
             {
@@ -451,7 +451,7 @@ namespace KinectSkeletons
             catch (System.Exception ex)
             {
                 ed.WriteMessage(
-                  "\nUnable to start Kinect sensor: " + ex.Message
+                    "\nUnable to start Kinect sensor: " + ex.Message
                 );
             }
         }
