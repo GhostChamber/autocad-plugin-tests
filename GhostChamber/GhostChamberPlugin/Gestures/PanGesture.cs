@@ -5,12 +5,12 @@ using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Gestures
 {
-	class PanGesture
+	class PanGesture : Gesture
 	{
         private GestureType gestureType;
         private Body activeBody = null;
 
-        public void HandlePanGesture( IList<Body> skeletons,int bodyCount )
+		public void HandlePanGesture( IList<Body> skeletons,int bodyCount )
         {
 
             if(gestureType == GestureType.NONE && skeletons != null)
@@ -80,5 +80,10 @@ namespace GhostChamberPlugin.Gestures
             gestureType = GestureType.NONE;
             activeBody = null;
         }
-    }
+
+		public bool IsActive(IList<Body> skeletons, int bodyCount)
+		{
+			return false;
+		}
+	}
 }
