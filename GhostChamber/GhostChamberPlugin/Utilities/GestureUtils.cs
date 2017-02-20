@@ -17,18 +17,43 @@ namespace GhostChamberPlugin.Utilities
             //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"CLAMP SEPARATION : {Math.Sqrt(dX * dX + dY * dY + dZ * dZ)}\n");
             return Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
         }
-        public static bool isCommandPositionActive(Body body, float threshold)
+
+        internal static bool isJointLessThan( Body activeBody, JointType jointA, JointType jointB )
         {
+            if(activeBody.Joints[jointA].Position.X <= activeBody.Joints[jointB].Position.X)
+            {
+                if(activeBody.Joints[jointA].Position.Y <= activeBody.Joints[jointB].Position.Y)
+                {
+                    if(activeBody.Joints[jointA].Position.Z <= activeBody.Joints[jointB].Position.Z)
+                    {
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
-        public static void ReleaseGesture(Body body, GestureType type)
+        internal static bool isCommandPositionActive( Body activeBody, float threshhold )
         {
-
+            if(Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold)
+            {
+                return true;
+            }
+            return false;
         }
 
-        public static bool IsToolPositionActive(Body body, float threshold)
+        internal static void ReleaseGesture(Body activeBody)
         {
+            activeBody = null;
+        }
+
+        internal static bool IsToolPositionActive( Body activeBody, float threshhold )
+        {
+            if(Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold)
+            {
+                return true;
+            }
+
             return false;
         }
     }

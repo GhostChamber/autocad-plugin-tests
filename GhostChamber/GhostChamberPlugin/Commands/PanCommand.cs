@@ -9,7 +9,7 @@ namespace GhostChamberPlugin.Commands
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
 
-		void Do(double horizontal, double vertical)
+		public void Do(double horizontal, double vertical)
 		{
 			camera.Pan(horizontal, vertical);
 		}
