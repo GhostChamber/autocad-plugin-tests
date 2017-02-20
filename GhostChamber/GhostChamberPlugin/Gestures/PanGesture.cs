@@ -1,28 +1,48 @@
 ﻿using Microsoft.Kinect;
-using System;
 using System.Collections.Generic;
 using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Gestures
 {
-	class PanGesture : Gesture
+    class PanGesture : Gesture
 	{
+
         private GestureType gestureType;
         private Body activeBody = null;
 
-		public void HandlePanGesture( IList<Body> skeletons,int bodyCount )
+        public bool IsActive( IList<Body> skeletons, int bodyCount )
         {
-
-            if(gestureType == GestureType.NONE && skeletons != null)
+            if(activeBody == null && skeletons != null)
             {
-                //Parse through all skeletons and check hand position
                 for(int i = 0; i < bodyCount; i++)
                 {
                     Body body = skeletons[i];
+                    if(body.Joints[JointType.Head].Position.Y != 0.0f &&
+                        Utilities.GestureUtils.isCommandPositionActive(body, 0.2f))
+                    {
+                        activeBody = body;
+                        gestureType = GestureType.PAN;
+                        //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Activated\n");
+                        break;
+                    }
+                }
+            }
+            return (activeBody != null);
+        }
 
-                    if(body.Joints[JointType.Head].Position.Y != 0.0f 
-                        && isCommandPositionActive(body, 0.2f) 
-                            && isJointLessThan(body, JointType.HandTipRight, JointType.ThumbRight))
+        public double Update( IList<Body> skeletons, int bodyCount )
+        {
+            if(gestureType == GestureType.NONE && skeletons != null)
+            {
+                Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Redundant call made @ PanGesture.cs: Line 35!\n");
+                //Parse through all skeletons and check hand position
+                for(int i = 0;i < bodyCount;i++)
+                {
+                    Body body = skeletons[i];
+
+                    if(body.Joints[JointType.Head].Position.Y != 0.0f
+                        && Utilities.GestureUtils.isCommandPositionActive(activeBody,0.2f))
+                            //&& isJointLessThan(body,JointType.HandTipRight,JointType.ThumbRight))
                     {
                         gestureType = GestureType.PAN;
                         activeBody = body;
@@ -33,57 +53,23 @@ namespace GhostChamberPlugin.Gestures
             {
                 if(activeBody != null)
                 {
-                    if(isCommandPositionActive(activeBody, 0.2f) && isJointLessThan(activeBody, JointType.HandTipRight, JointType.ThumbRight))
+                    if(Utilities.GestureUtils.isCommandPositionActive(activeBody,0.2f) && !Utilities.GestureUtils.IsToolPositionActive(activeBody, 0.2f))
                     {
-						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Made it PAN");
+                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Made it PAN");
                     }
                 }
 
                 if(activeBody != null)
                 {
                     // kinect units are in meters. Hence left - right is scaled from minHandDistance to maxHandDistance
-                    if(isCommandPositionActive(activeBody, 0.2f))
+                    if(Utilities.GestureUtils.isCommandPositionActive(activeBody,0.2f))
                     {
-                        ReleaseGesture();
+                        Utilities.GestureUtils.ReleaseGesture(activeBody, gestureType);
                     }
                 }
             }
-        }
 
-        private bool isJointLessThan(Body currentBody, JointType jointA, JointType jointB)
-        {
-            if(currentBody.Joints[jointA].Position.X <= currentBody.Joints[jointB].Position.X)
-            {
-                if(currentBody.Joints[jointA].Position.Y <= currentBody.Joints[jointB].Position.Y)
-                {
-                    if(currentBody.Joints[jointA].Position.Z <= currentBody.Joints[jointB].Position.Z)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return 1;
         }
-
-        private bool isCommandPositionActive(Body activeBody, float threshhold)
-        {
-            if(Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > threshhold)
-            {
-                return false;
-            }
-            
-            return true;
-        }
-
-        private void ReleaseGesture()
-        {
-            gestureType = GestureType.NONE;
-            activeBody = null;
-        }
-
-		public bool IsActive(IList<Body> skeletons, int bodyCount)
-		{
-			return false;
-		}
 	}
 }
