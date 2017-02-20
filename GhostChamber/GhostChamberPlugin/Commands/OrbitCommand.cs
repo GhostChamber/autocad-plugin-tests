@@ -10,7 +10,7 @@ namespace GhostChamberPlugin.Commands
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
 
-		void Do(Vector3d axis, double angle)
+		public void Do(Vector3d axis, double angle)
 		{
 			camera.Orbit(axis, angle);
 		}

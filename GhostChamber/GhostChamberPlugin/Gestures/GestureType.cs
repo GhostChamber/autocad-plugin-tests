@@ -6,5 +6,6 @@ public enum GestureType
 	NONE,
 	ZOOM,
 	PAN,
-	GRAB
+	GRAB,
+    ORBIT
 }

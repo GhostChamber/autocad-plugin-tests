@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandGestureBindings\CommandGestureBinding.cs" />
+    <Compile Include="CommandGestureBindings\OrbitBinding.cs" />
     <Compile Include="CommandGestureBindings\ZoomBinding.cs" />
     <Compile Include="Commands\OrbitCommand.cs" />
     <Compile Include="Commands\PanCommand.cs" />
@@ -117,12 +118,14 @@
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureType.cs" />
     <Compile Include="Gestures\GrabGesture.cs" />
+    <Compile Include="Gestures\OrbitGesture.cs" />
     <Compile Include="Gestures\PanGesture.cs" />
     <Compile Include="Gestures\ZoomGesture.cs" />
     <Compile Include="Experiments\KinectSkeletons.cs" />
     <Compile Include="Experiments\ZoomWindow.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\GestureUtils.cs" />
     <Compile Include="Utilities\MathUtils.cs" />
   </ItemGroup>
   <ItemGroup />

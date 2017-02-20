@@ -24,12 +24,11 @@ namespace GhostChamberPlugin.Gestures
 				for (int i = 0; i < bodyCount; i++)
 				{
 					Microsoft.Kinect.Body body = skeletons[i];
-					if (body.Joints[JointType.Head].Position.Y != 0.0f &&
-						(Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < 0.2f))
+                    if (IsGestureStarted(body))
 					{
 						activeBody = body;
 						currentZoom = 1.0;
-						//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Activated\n");
+						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ZOOM\n");
 						break;
 					}
 				}
@@ -37,7 +36,25 @@ namespace GhostChamberPlugin.Gestures
 			return (activeBody != null);
 		}
 
-		public double Update(IList<Body> skeletons, int bodyCount)
+        public bool IsGestureStarted(Body body)
+        {
+            if (body.Joints[JointType.Head].Position.Y == 0.0f)
+            {
+                return false;
+            }
+
+            if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < OrbitGesture.CAPTURE_THRESHOLD))
+            {
+                if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]) > OrbitGesture.CLAMP_THRESHOLD)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public double Update(IList<Body> skeletons, int bodyCount)
 		{
 			if (activeBody != null && !zoomRightCaptured)
 			{
