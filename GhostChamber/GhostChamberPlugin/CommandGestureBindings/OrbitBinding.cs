@@ -28,7 +28,7 @@ namespace GhostChamberPlugin.CommandGestureBindings
             Vector3d movement = gesture.Update(skeletons, bodyCount);
             if (movement.Length > 0.0)
             {
-                command.Do(Vector3d.ZAxis, movement.X * X_ROTATION_MULTIPLIER);
+                command.Do(Vector3d.ZAxis, -1*movement.X * X_ROTATION_MULTIPLIER);
                 command.Do(Vector3d.XAxis, movement.Y * Y_ROTATION_MULTIPLIER);
             }
         }

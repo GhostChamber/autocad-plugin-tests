@@ -31,7 +31,7 @@ namespace GhostChamberPlugin.Gestures
         {
             if (activeBody == null && skeletons != null)
             {
-                for (int i = 0; i < bodyCount; i++)
+                for (int i = 0; i < bodyCount; ++i)
                 {
                     Microsoft.Kinect.Body body = skeletons[i];
 
