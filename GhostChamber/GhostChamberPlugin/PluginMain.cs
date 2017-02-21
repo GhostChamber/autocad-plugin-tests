@@ -32,8 +32,8 @@ namespace GhostChamberPlugin
 		private Dictionary<GestureType, CommandGestureBinding> _gestureMapping = new Dictionary<GestureType, CommandGestureBinding>()
 		{
             {GestureType.ZOOM, new ZoomBinding()},
-            {GestureType.ORBIT, new OrbitBinding()}
-            //{GestureType.PAN, new PanBinding()}
+            {GestureType.ORBIT, new OrbitBinding()},
+            {GestureType.PAN, new PanBinding()}
 		};
 
 		public PluginMain()

@@ -8,6 +8,7 @@ namespace GhostChamberPlugin.Utilities
     {
         public const double CLAMP_THRESHOLD = 0.09;
         public const double CAPTURE_THRESHOLD = 0.2;
+        public const double CAPTURE_DEPTH_OFFSET = 0.4;
         public static double GetJointDistance(Joint j1, Joint j2)
         {
             double dX = j1.Position.X - j2.Position.X;
@@ -34,7 +35,8 @@ namespace GhostChamberPlugin.Utilities
 
         internal static bool isCommandPositionActive( Body activeBody, float threshhold )
         {
-            if(Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold)
+            if(Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold &&
+               activeBody.Joints[JointType.HandLeft].Position.Z < activeBody.Joints[JointType.Head].Position.Z - CAPTURE_DEPTH_OFFSET)
             {
                 return true;
             }

@@ -12,8 +12,7 @@ namespace GhostChamberPlugin.Gestures
 	{
         private Body activeBody = null;
         private Vector3d centerPosition = new Vector3d(0,0,0);
-        private Stopwatch stopwatch = new Stopwatch();
-        private TimeSpan ts = new TimeSpan();
+        int count = 0;
 
         public bool IsActive( IList<Body> skeletons, int bodyCount )
         {
@@ -25,16 +24,8 @@ namespace GhostChamberPlugin.Gestures
                     if(body.Joints[JointType.Head].Position.Y != 0.0f &&
                         GestureUtils.isCommandPositionActive(body, 0.2f))
                     {
-                        ts = stopwatch.Elapsed;
-                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Command Detected, locking Input Position... {0}\n", ts.Ticks);
-                        stopwatch.Start();
-                        if(ts.Ticks >= 500)
-                        {
-                            centerPosition = new Vector3d(body.Joints[JointType.HandLeft].Position.X, body.Joints[JointType.HandLeft].Position.Y, 0);
-                            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Command Position Locked!\n");
-                            activeBody = body;
-                        }
-                        stopwatch.Stop();
+                        centerPosition = new Vector3d(body.Joints[JointType.HandLeft].Position.X, body.Joints[JointType.HandLeft].Position.Y, 0);
+                        activeBody = body;
                         break;
                     }
                 }
@@ -49,12 +40,12 @@ namespace GhostChamberPlugin.Gestures
             {
                 if (GestureUtils.isCommandPositionActive(activeBody, 0.5f) && !GestureUtils.IsToolPositionActive(activeBody, 0.2f))
                 {
-                    if(GestureUtils.GetJointDistance(activeBody.Joints[JointType.HandTipLeft], activeBody.Joints[JointType.ThumbLeft]) <= 0.05f)
-                    {
+                    //if(GestureUtils.GetJointDistance(activeBody.Joints[JointType.HandTipLeft], activeBody.Joints[JointType.ThumbLeft]) <= 0.05f)
+                    //{
                         
-                        return new Vector3d(0,0,0);
-                        //centerPosition = new Vector3d(activeBody.Joints[JointType.HandLeft].Position.X, activeBody.Joints[JointType.HandLeft].Position.Y, 0);
-                    }   
+                    //    return new Vector3d(0,0,0);
+                    //    //centerPosition = new Vector3d(activeBody.Joints[JointType.HandLeft].Position.X, activeBody.Joints[JointType.HandLeft].Position.Y, 0);
+                    //}   
 
                     if(activeBody.Joints[JointType.HandLeft].Position.X != centerPosition.X || activeBody.Joints[JointType.HandLeft].Position.Y != centerPosition.Y)
                     {
@@ -70,9 +61,12 @@ namespace GhostChamberPlugin.Gestures
             if (activeBody != null)
             {
                 // kinect units are in meters. Hence left - right is scaled from minHandDistance to maxHandDistance
-                if (GestureUtils.isCommandPositionActive(activeBody, 0.2f))
+                if (!GestureUtils.isCommandPositionActive(activeBody, 0.2f))
                 {
-                    GestureUtils.ReleaseGesture(activeBody);
+                    count++;
+                    //GestureUtils.ReleaseGesture(activeBody);
+                    Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"DEACTIVATE PAN {count}\n");
+                    activeBody = null;
                 }
             }
 
