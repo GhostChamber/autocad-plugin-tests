@@ -44,8 +44,10 @@ namespace GhostChamberPlugin.Commands
 		// Pan in the specified direction
 		public void Pan(double leftRight, double upDown)
 		{
-			// Adjust the ViewTableRecord
-			_vtr.CenterPoint = _vtr.CenterPoint + new Vector2d(leftRight, upDown);
+            _vtr = _doc.Editor.GetCurrentView();
+
+            // Adjust the ViewTableRecord
+            _vtr.CenterPoint = _vtr.CenterPoint + new Vector2d(leftRight, upDown);
 
 			// Set it as the current view
 			_doc.Editor.SetCurrentView(_vtr);

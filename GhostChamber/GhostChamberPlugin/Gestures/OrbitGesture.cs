@@ -15,13 +15,11 @@ namespace GhostChamberPlugin.Gestures
     public sealed class OrbitGesture : Gesture
     {
         private Microsoft.Kinect.Body activeBody = null;
-        private CameraSpacePoint rightStartPosition;
-        private CameraSpacePoint rightPreviousPosition;
-        private CameraSpacePoint rightPosition;
+        private CameraSpacePoint toolStartPosition;
+        private CameraSpacePoint toolPreviousPosition;
+        private CameraSpacePoint toolPosition;
 
-        public const double CAPTURE_THRESHOLD = 0.2;
-        public const double CLAMP_THRESHOLD = 0.1;
-        const double ROTATION_COMMAND_THRESHOLD = 0.05f;
+        const double ROTATION_COMMAND_THRESHOLD = 0.005f;
         const int SMOOTHING_WINDOW = 5;
 
         public OrbitGesture()
@@ -37,17 +35,14 @@ namespace GhostChamberPlugin.Gestures
                 {
                     Microsoft.Kinect.Body body = skeletons[i];
 
-                    double distance = GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]);
-                    Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"{distance}\n");
-
                     if (IsGestureActive(body))
                     {
                         activeBody = body;
                         Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ORBIT\n");
 
                         // Record right hand location
-                        rightStartPosition = activeBody.Joints[JointType.HandRight].Position;
-                        rightPreviousPosition = rightStartPosition;
+                        toolStartPosition = activeBody.Joints[JointType.HandLeft].Position;
+                        toolPreviousPosition = toolStartPosition;
                         break;
                     }
                 }
@@ -62,12 +57,14 @@ namespace GhostChamberPlugin.Gestures
                 return false;
             }
 
-            if(Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD)
+            if(Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD &&
+               body.Joints[JointType.HandRight].Position.Z < body.Joints[JointType.Head].Position.Z - 0.5)
             {
-                if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]) < CLAMP_THRESHOLD)
-                {
-                    return true;
-                }
+                return true;
+                //if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbRight], body.Joints[JointType.HandTipRight]) < GestureUtils.CLAMP_THRESHOLD)
+                //{
+                //    return true;
+                //}
             }
 
             return false;
@@ -79,17 +76,17 @@ namespace GhostChamberPlugin.Gestures
 
             if (activeBody != null)
             {
-                rightPosition = activeBody.Joints[JointType.HandRight].Position;
+                toolPosition = activeBody.Joints[JointType.HandLeft].Position;
 
-                double dX = (rightPosition.X - rightPreviousPosition.X);
-                double dY = (rightPosition.Y - rightPreviousPosition.Y);
-                double dZ = (rightPosition.Z - rightPreviousPosition.Z);
+                double dX = (toolPosition.X - toolPreviousPosition.X);
+                double dY = (toolPosition.Y - toolPreviousPosition.Y);
+                double dZ = (toolPosition.Z - toolPreviousPosition.Z);
 
                 double distance = Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
 
                 if (distance > ROTATION_COMMAND_THRESHOLD)
                 {
-                    rightPreviousPosition = rightPosition;
+                    toolPreviousPosition = toolPosition;
                     movement = new Vector3d(dX, dY, dZ);
                 }
 

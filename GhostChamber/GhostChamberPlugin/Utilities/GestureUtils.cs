@@ -1,16 +1,19 @@
 ﻿using System;
 using Microsoft.Kinect;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Utilities
 {
     public static class GestureUtils
     {
+        public const double CLAMP_THRESHOLD = 0.09;
+        public const double CAPTURE_THRESHOLD = 0.2;
         public static double GetJointDistance(Joint j1, Joint j2)
         {
             double dX = j1.Position.X - j2.Position.X;
             double dY = j1.Position.Y - j2.Position.Y;
             double dZ = j1.Position.Z - j2.Position.Z;
-            //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"CLAMP SEPARATION : {Math.Sqrt(dX * dX + dY * dY + dZ * dZ)}\n");
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"CLAMP SEPARATION : {Math.Sqrt(dX * dX + dY * dY + dZ * dZ)}\n");
             return Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
         }
 

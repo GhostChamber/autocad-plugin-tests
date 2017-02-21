@@ -16,9 +16,6 @@ namespace GhostChamberPlugin.Gestures
 		private double zoomRightStart;
 		private double zoomRight;
 
-        private const double CAPTURE_THRESHOLD = 0.2;
-        private const double CLAMP_THRESHOLD = 0.1f;
-
         public bool IsActive(IList<Body> skeletons, int bodyCount)
 		{
 			if (activeBody == null && skeletons != null)
@@ -47,13 +44,17 @@ namespace GhostChamberPlugin.Gestures
                 return false;
             }
 
-            if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD) &&
-                (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD))
+            if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD) &&
+                (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD))
             {
-                if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]) > CLAMP_THRESHOLD)
+                if (body.Joints[JointType.HandRight].Position.Z > body.Joints[JointType.Head].Position.Z - 0.5)
                 {
                     return true;
                 }
+                //if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbRight], body.Joints[JointType.HandTipRight]) > GestureUtils.CLAMP_THRESHOLD)
+                //{
+                //    return true;
+                //}
             }
 
             return false;
