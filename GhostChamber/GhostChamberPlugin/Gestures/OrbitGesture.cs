@@ -15,15 +15,9 @@ namespace GhostChamberPlugin.Gestures
     public sealed class OrbitGesture : Gesture
     {
         private Microsoft.Kinect.Body activeBody = null;
-        private double currentRotation = 0.0;
-        private float orbitRotation = 0.0f;
-        private bool rightHandCaptured = false;
         private CameraSpacePoint rightStartPosition;
         private CameraSpacePoint rightPreviousPosition;
         private CameraSpacePoint rightPosition;
-
-        private Queue clampDistances;
-        private double averageClampDistance;
 
         public const double CAPTURE_THRESHOLD = 0.2;
         public const double CLAMP_THRESHOLD = 0.1;
@@ -32,22 +26,7 @@ namespace GhostChamberPlugin.Gestures
 
         public OrbitGesture()
         {
-            clampDistances = new Queue();
 
-            for (int i = 0; i < SMOOTHING_WINDOW; i++)
-            {
-                clampDistances.Enqueue(0.0);
-            }
-
-            //double sum = 0.0;
-
-            //foreach (Object obj in clampDistances)
-            //{
-            //    double value = (double)obj;
-            //    sum += value;
-            //}
-
-            //averageClampDistance = sum / SMOOTHING_WINDOW;
         }
 
         public bool IsActive(IList<Body> skeletons, int bodyCount)
@@ -61,11 +40,14 @@ namespace GhostChamberPlugin.Gestures
                     double distance = GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]);
                     Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"{distance}\n");
 
-                    if (IsGestureStarted(body))
+                    if (IsGestureActive(body))
                     {
                         activeBody = body;
-                        currentRotation = 0.0f;
                         Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ORBIT\n");
+
+                        // Record right hand location
+                        rightStartPosition = activeBody.Joints[JointType.HandRight].Position;
+                        rightPreviousPosition = rightStartPosition;
                         break;
                     }
                 }
@@ -73,7 +55,7 @@ namespace GhostChamberPlugin.Gestures
             return (activeBody != null);
         }
 
-        public bool IsGestureStarted(Body body)
+        public bool IsGestureActive(Body body)
         {
             if  (body.Joints[JointType.Head].Position.Y == 0.0f)
             {
@@ -95,18 +77,7 @@ namespace GhostChamberPlugin.Gestures
         {
             Vector3d movement = new Vector3d(0.0, 0.0, 0.0);
 
-            if (activeBody != null && !rightHandCaptured)
-            {
-                if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD)// &&
-                    //GetJointDistance(activeBody.Joints[JointType.ThumbRight], activeBody.Joints[JointType.HandTipRight]) < CLAMP_THRESHOLD)
-                {
-                    rightHandCaptured = true;
-                    rightStartPosition = activeBody.Joints[JointType.HandRight].Position;
-                    rightPreviousPosition = rightStartPosition;
-                }
-            }
-
-            if (activeBody != null && rightHandCaptured)
+            if (activeBody != null)
             {
                 rightPosition = activeBody.Joints[JointType.HandRight].Position;
 
@@ -122,9 +93,8 @@ namespace GhostChamberPlugin.Gestures
                     movement = new Vector3d(dX, dY, dZ);
                 }
 
-                if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > CAPTURE_THRESHOLD)
+                if (!IsGestureActive(activeBody))
                 {
-                    rightHandCaptured = false;
                     activeBody = null;
                     Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DEACTIVATED\n");
                 }

@@ -6,6 +6,7 @@ namespace GhostChamberPlugin.Gestures
 {
 	interface Gesture
 	{
-		bool IsActive(IList<Body> skeletons, int bodyCount);
+
+        bool IsActive(IList<Body> skeletons, int bodyCount);
 	}
 }

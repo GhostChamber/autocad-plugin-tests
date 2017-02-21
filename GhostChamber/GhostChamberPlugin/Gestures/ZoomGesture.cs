@@ -13,22 +13,26 @@ namespace GhostChamberPlugin.Gestures
 		private double maxHandDistance = 0.85;
 		private double currentZoom = 1.0;
 		private float zoomScale = 1.0f;
-		private bool zoomRightCaptured = false;
 		private double zoomRightStart;
-		private float zoomRight;
+		private double zoomRight;
 
-		public bool IsActive(IList<Body> skeletons, int bodyCount)
+        private const double CAPTURE_THRESHOLD = 0.2;
+        private const double CLAMP_THRESHOLD = 0.1f;
+
+        public bool IsActive(IList<Body> skeletons, int bodyCount)
 		{
 			if (activeBody == null && skeletons != null)
 			{
 				for (int i = 0; i < bodyCount; i++)
 				{
 					Microsoft.Kinect.Body body = skeletons[i];
-                    if (IsGestureStarted(body))
+                    if (IsGestureActive(body))
 					{
 						activeBody = body;
 						currentZoom = 1.0;
-						Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ZOOM\n");
+                        zoomRightStart = activeBody.Joints[JointType.HandRight].Position.X;
+                        zoomRight = zoomRightStart;
+                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ZOOM\n");
 						break;
 					}
 				}
@@ -36,16 +40,17 @@ namespace GhostChamberPlugin.Gestures
 			return (activeBody != null);
 		}
 
-        public bool IsGestureStarted(Body body)
+        public bool IsGestureActive(Body body)
         {
             if (body.Joints[JointType.Head].Position.Y == 0.0f)
             {
                 return false;
             }
 
-            if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < OrbitGesture.CAPTURE_THRESHOLD))
+            if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD) &&
+                (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD))
             {
-                if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]) > OrbitGesture.CLAMP_THRESHOLD)
+                if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbLeft], body.Joints[JointType.HandTipLeft]) > CLAMP_THRESHOLD)
                 {
                     return true;
                 }
@@ -56,16 +61,8 @@ namespace GhostChamberPlugin.Gestures
 
         public double Update(IList<Body> skeletons, int bodyCount)
 		{
-			if (activeBody != null && !zoomRightCaptured)
-			{
-				if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < 0.2f)
-				{
-					zoomRightCaptured = true;
-					zoomRightStart = activeBody.Joints[JointType.HandRight].Position.X;
-				}
-			}
 
-			if (activeBody != null && zoomRightCaptured)
+			if (activeBody != null)
 			{
 				zoomRight = activeBody.Joints[JointType.HandRight].Position.X;
 
@@ -87,11 +84,10 @@ namespace GhostChamberPlugin.Gestures
 				double returnValue = (zoomFraction / currentZoom);
 				currentZoom = zoomFraction;
 
-				if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > 0.2f)
+				if (!IsGestureActive(activeBody))
 				{
-					zoomRightCaptured = false;
 					activeBody = null;
-					//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Deactivated\n");
+					Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DEACTIVATED\n");
 				}
 				return returnValue;
 			}

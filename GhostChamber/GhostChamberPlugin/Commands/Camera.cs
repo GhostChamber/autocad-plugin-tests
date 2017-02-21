@@ -28,8 +28,10 @@ namespace GhostChamberPlugin.Commands
 		// Zoom in or out
 		public void Zoom(double factor)
 		{
-			// Adjust the ViewTableRecord
-			_vtr.Height *= factor;
+            _vtr = _doc.Editor.GetCurrentView();
+
+            // Adjust the ViewTableRecord
+            _vtr.Height *= factor;
 			_vtr.Width *= factor;
 
 			// Set it as the current view
@@ -52,11 +54,16 @@ namespace GhostChamberPlugin.Commands
 		// Orbit by angle around axis
 		public void Orbit(Vector3d axis, double angle)
 		{
-			// Adjust the ViewTableRecord
-			_vtr.ViewDirection = _vtr.ViewDirection.TransformBy(Matrix3d.Rotation(angle, axis, Point3d.Origin));
+            // Adjust the ViewTableRecord
+            _vtr = _doc.Editor.GetCurrentView();
+
+            _vtr.ViewDirection = _vtr.ViewDirection.TransformBy(Matrix3d.Rotation(angle, axis, Point3d.Origin));
 
 			// Set it as the current view
 			_doc.Editor.SetCurrentView(_vtr);
-		}
+
+            
+
+        }
 	}
 }
