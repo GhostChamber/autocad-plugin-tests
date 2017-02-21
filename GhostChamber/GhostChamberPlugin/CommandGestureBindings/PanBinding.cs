@@ -21,7 +21,7 @@ namespace GhostChamberPlugin.CommandGestureBindings
 
         public void Update(IList<Body> skeletons, int bodyCount)
         {
-            command.Do(gesture.Update(skeletons, bodyCount), 0.0);
+            command.Do(gesture.Update(skeletons, bodyCount));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 
 namespace GhostChamberPlugin.Commands
@@ -9,9 +10,9 @@ namespace GhostChamberPlugin.Commands
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
 
-		public void Do(double horizontal, double vertical)
+		public void Do(Vector3d position)
 		{
-			camera.Pan(horizontal, vertical);
+			camera.Pan(position.X, -position.Y);
 		}
 
 		[CommandMethod("GHOSTPLUGINS", "GHOSTPAN", CommandFlags.Modal)]
@@ -19,7 +20,8 @@ namespace GhostChamberPlugin.Commands
 		{
 			double horizontal = double.Parse(editor.GetString("Pan Horizontal: ").StringResult);
 			double vertical = double.Parse(editor.GetString("Pan Vertical: ").StringResult);
-			Do(horizontal, vertical);
+
+			Do(new Vector3d(horizontal, vertical, 0));
 		}
 	}
 }
