@@ -90,6 +90,12 @@
       <HintPath>..\external\inc-win32\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Emgu.CV.UI">
+      <HintPath>..\external\assemblies\Emgu.CV.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.World">
+      <HintPath>..\external\assemblies\Emgu.CV.World.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\assemblies\Microsoft.Kinect.dll</HintPath>
@@ -116,6 +122,7 @@
     <Compile Include="Experiments\BodyTracker.cs" />
     <Compile Include="Experiments\BoundingBox.cs" />
     <Compile Include="Commands\Camera.cs" />
+    <Compile Include="FingerDetection\FingerTracker.cs" />
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureType.cs" />
     <Compile Include="Gestures\GrabGesture.cs" />
