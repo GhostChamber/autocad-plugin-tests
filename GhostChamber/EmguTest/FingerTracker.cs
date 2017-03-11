@@ -41,12 +41,13 @@ namespace EmguTest
             if (mCapture != null &&
                 mCapture.Ptr != IntPtr.Zero)
             {
-                mCapture.Retrieve(mFrame, 0);
+                //mCapture.Retrieve(mFrame, 0);
 
-                if (mCaptureForm != null)
-                {
-                    (mCaptureForm.Controls["FrameImageBox"] as ImageBox).Image = mFrame;
-                }
+                //if (mCaptureForm != null)
+                //{
+                //    (mCaptureForm.Controls["FrameImageBox"] as ImageBox).Image = mFrame;
+                //}
+                
             }
         }
     }

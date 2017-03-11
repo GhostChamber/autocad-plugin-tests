@@ -20,7 +20,5 @@ namespace EmguTest
             fingerTracker.mCaptureForm = captureForm;
             Application.Run(captureForm);
         }
-
-
     }
 }
