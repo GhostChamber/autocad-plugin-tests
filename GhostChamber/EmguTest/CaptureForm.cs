@@ -11,7 +11,7 @@ using Microsoft.Kinect;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Emgu.Util;
+using Emgu.CV.Util;
 using Emgu.CV.UI;
 
 namespace EmguTest
@@ -28,6 +28,9 @@ namespace EmguTest
         public static int depthHeight = 0;
 
         private Mat mFrame;
+
+        const double THRESHOLD = 80.0;
+        const double THRESHOLD_MAX_VALUE = 255;
 
         public CaptureForm()
         {
@@ -75,27 +78,94 @@ namespace EmguTest
 
                                 depthData = new ushort[depthWidth * depthHeight];
                                 pixelData = new byte[depthWidth * depthHeight * 3];
-                                mFrame = new Mat(depthHeight, depthWidth, DepthType.Cv8U, 3);
+                                mFrame = new Mat(depthHeight, depthWidth, DepthType.Cv8U, 1);
                             }
 
                             ushort minDepth = depthFrame.DepthMinReliableDistance;
                             ushort maxDepth = depthFrame.DepthMaxReliableDistance;
 
                             depthFrame.CopyFrameDataToArray(depthData);
-                            Image<Bgr, Byte> img = mFrame.ToImage<Bgr, Byte>();
+                            Image<Gray, Byte> img = mFrame.ToImage<Gray, Byte>();
 
                             for (int i = 0; i < depthData.Length; i++)
                             {
                                 ushort depth = depthData[i];
                                 //byte intensity = (byte)(depth >= minDepth && depth <= maxDepth ? depth : 0);
-                                byte intensity = (byte) (depth < 1500  && depth > 500 ? 0 : 255);
+                                byte intensity = (byte) (depth < 1000  && depth > 10 ? 0 : 255);
 
                                 img.Data[i / depthWidth, i % depthWidth, 0] = intensity;
-                                img.Data[i / depthWidth, i % depthWidth, 1] = intensity;
-                                img.Data[i / depthWidth, i % depthWidth, 2] = intensity;
                             }
 
-                            (Controls["FrameImageBox"] as ImageBox).Image = img;
+                            mFrame = img.Mat;
+
+                            // DISPLAY Depth image
+                            //(Controls["FrameImageBox"] as ImageBox).Image = img;
+
+                            //*********************
+                            // Gaussian Blur
+                            //*********************
+                            CvInvoke.GaussianBlur(img, img, new Size(5, 5), 0);
+
+                            //*********************
+                            // Threshold
+                            //*********************
+                            //mFrame = img.Mat;
+
+                            //Mat thresholds = new Mat(); ;
+
+                            //CvInvoke.Threshold(mFrame, thresholds, THRESHOLD, THRESHOLD_MAX_VALUE, ThresholdType.Binary);
+
+                            //// DISPLAY Thresholds
+                            //(Controls["FrameImageBox"] as ImageBox).Image = img;
+
+                            //*********************
+                            // Contours
+                            //*********************
+                            Mat hierarchy = new Mat();
+
+                            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                            VectorOfVectorOfPointF significantContours = new VectorOfVectorOfPointF();
+                            CvInvoke.FindContours(mFrame, contours, hierarchy, RetrType.Tree, ChainApproxMethod.ChainApproxNone);
+
+                            Image<Gray, Byte> contourImage = new Image<Gray, Byte>(mFrame.Size);
+
+                            for (int i = 0; i < contours.Size; i++)
+                            {
+                                if (CvInvoke.ContourArea(contours[i]) > 50.0)
+                                {
+                                    VectorOfPointF bigContour = new VectorOfPointF();
+                                    System.Drawing.PointF[] points = new System.Drawing.PointF[contours[i].Size];
+                                    Point[] intPoints = contours[i].ToArray();
+
+                                    for (int j = 0; j < intPoints.Length; j++)
+                                    {
+                                        points[j] = intPoints[j];
+                                    }
+
+                                    bigContour.Push(points);
+                                    significantContours.Push(bigContour);
+                                }
+                            }
+
+                            //if (contours.Size > 0)
+                            //{
+                            //    CvInvoke.DrawContours(contourImage, significantContours, -1, new MCvScalar(255, 0, 0));
+                            //}
+
+                            //(Controls["FrameImageBox"] as ImageBox).Image = contourImage;
+
+                            //*********************
+                            // Convex Hulls
+                            //*********************
+                            for (int i = 0; i < significantContours.Size; i++)
+                            {
+                                System.Drawing.PointF[] hullPoints;
+                                hullPoints = CvInvoke.ConvexHull(significantContours[i].ToArray());
+
+                                CvInvoke.Polylines(mFrame, Array.ConvertAll(hullPoints, Point.Round), true, new MCvScalar(255, 255, 255));
+                            }
+
+                            (Controls["FrameImageBox"] as ImageBox).Image = mFrame;
                         }
                     }
                 }
