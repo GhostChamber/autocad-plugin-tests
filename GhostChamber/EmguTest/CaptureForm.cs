@@ -21,6 +21,9 @@ namespace EmguTest
         private KinectSensor mKinect = null;
         private MultiSourceFrameReader mFrameReader = null;
         private Timer mTickTimer;
+        private IList<Microsoft.Kinect.Body> mSkeletons = null;
+        private DepthSpacePoint[] mLeftHandPoints = null;
+        private DepthSpacePoint[] mRightHandPoints = null;
 
         public static ushort[] depthData = null;
         public static byte[] pixelData = null;
@@ -54,9 +57,86 @@ namespace EmguTest
             else
             {
                 mKinect.Open();
-                mFrameReader = mKinect.OpenMultiSourceFrameReader(FrameSourceTypes.Depth);
+                mFrameReader = mKinect.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Body);
+            }
+        }
+
+        private bool IsDefectUnique(Point point, List<Point> pointList)
+        {
+            foreach (Point p in pointList)
+            {
+                if (Math.Sqrt( (point.X - p.X) * (point.X - p.X) + 
+                               (point.Y - p.Y) * (point.Y - p.Y)) < 15.0)
+                {
+                    return false;
+                }
             }
 
+            return true;
+        }
+
+        private bool IsDefectOutsideHandRadius(Point startPoint)
+        {
+            if (mKinect != null &&
+                mRightHandPoints != null &&
+                mLeftHandPoints != null)
+            {
+                for (int i = 0; i < mKinect.BodyFrameSource.BodyCount; i++)
+                {
+                    if (GetPointDistance(mRightHandPoints[i], startPoint) < 15 &&
+                        GetPointDistance(mLeftHandPoints[i], startPoint) < 15)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private double GetPointDistance(DepthSpacePoint p1, Point p2)
+        {
+            return Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y));
+        }
+        private void TrackFingers()
+        {
+
+        }
+
+        public void UpdateBody()
+        {
+            if (mKinect != null)
+            {
+                MultiSourceFrame frame = mFrameReader.AcquireLatestFrame();
+                if (frame != null)
+                {
+                    using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
+                    {
+                        if (bodyFrame != null)
+                        {
+                            if (mSkeletons == null)
+                            {
+                                mSkeletons = new Microsoft.Kinect.Body[mKinect.BodyFrameSource.BodyCount];
+                                mRightHandPoints = new DepthSpacePoint[mKinect.BodyFrameSource.BodyCount];
+                                mLeftHandPoints = new DepthSpacePoint[mKinect.BodyFrameSource.BodyCount];
+                            }
+                            bodyFrame.GetAndRefreshBodyData(mSkeletons);
+                        }
+                    }
+                }
+
+                // Update hand positions
+                if (mSkeletons != null &&
+                    mRightHandPoints != null &&
+                    mLeftHandPoints != null)
+                {
+                    for (int i = 0; i < mKinect.BodyFrameSource.BodyCount; i++)
+                    {
+                        mRightHandPoints[i] = mKinect.CoordinateMapper.MapCameraPointToDepthSpace(mSkeletons[i].Joints[JointType.HandRight].Position);
+                        mLeftHandPoints[i] = mKinect.CoordinateMapper.MapCameraPointToDepthSpace(mSkeletons[i].Joints[JointType.HandLeft].Position);
+                    }
+                }
+            }
         }
 
         public void Tick(Object sender, EventArgs args)
@@ -64,6 +144,8 @@ namespace EmguTest
             if (mKinect != null)
             {
                 MultiSourceFrame frame = mFrameReader.AcquireLatestFrame();
+
+                TrackFingers();
 
                 if (frame != null)
                 {
@@ -180,6 +262,8 @@ namespace EmguTest
                                     Matrix<int> m = new Matrix<int>(defects.Rows, defects.Cols, defects.NumberOfChannels);
                                     defects.CopyTo(m);
 
+                                    List<Point> validPoints = new List<Point>();
+
                                     // Draw tha defacts
                                     for (int d = 0; d < m.Rows; d++)
                                     {
@@ -189,7 +273,23 @@ namespace EmguTest
 
                                         Point farthestPoint = contourPoints[farthestIndex];
                                         Point startPoint = contourPoints[startIndex];
-                                        CvInvoke.Circle(mFrame, startPoint, 3, new MCvScalar(255, 0, 0), 2);
+
+                                        if (IsDefectUnique(startPoint, validPoints) &&
+                                            IsDefectOutsideHandRadius(startPoint))
+                                        {
+                                            validPoints.Add(startPoint);
+                                        }
+                                        
+                                        //if (true/*endIndex - startIndex > 10*/)
+                                        //{
+                                        //    CvInvoke.Circle(mFrame, startPoint, 3, new MCvScalar(255, 0, 0), 2);
+                                        //}
+                                    }
+
+                                    // Draw valid indices
+                                    foreach (Point p in validPoints)
+                                    {
+                                        CvInvoke.Circle(mFrame, p, 3, new MCvScalar(255, 0, 0), 2);
                                     }
                                 }
                             }
