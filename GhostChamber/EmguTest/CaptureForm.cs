@@ -131,7 +131,7 @@ namespace EmguTest
 
                             for (int i = 0; i < contours.Size; i++)
                             {
-                                if (CvInvoke.ContourArea(contours[i]) > 50.0)
+                                if (CvInvoke.ContourArea(contours[i]) > 500.0)
                                 {
                                     VectorOfPointF bigContour = new VectorOfPointF();
                                     System.Drawing.PointF[] points = new System.Drawing.PointF[contours[i].Size];
@@ -160,9 +160,38 @@ namespace EmguTest
                             for (int i = 0; i < significantContours.Size; i++)
                             {
                                 System.Drawing.PointF[] hullPoints;
+                                VectorOfPoint contourPoints = new VectorOfPoint(Array.ConvertAll(significantContours[i].ToArray(), Point.Round));
+                                VectorOfInt convexHull = new VectorOfInt();
+
                                 hullPoints = CvInvoke.ConvexHull(significantContours[i].ToArray());
+                                CvInvoke.ConvexHull(contourPoints, convexHull);
 
                                 CvInvoke.Polylines(mFrame, Array.ConvertAll(hullPoints, Point.Round), true, new MCvScalar(255, 255, 255));
+
+                                // How many defects tho?
+                                //VectorOfVectorOfInt defects = new VectorOfVectorOfInt();
+                                Mat defects = new Mat();
+                                CvInvoke.ConvexityDefects(contourPoints /*significantContours[i]*/,
+                                                          convexHull /*new VectorOfPointF(hullPoints)*/,
+                                                          defects);
+
+                                if (!defects.IsEmpty)
+                                {
+                                    Matrix<int> m = new Matrix<int>(defects.Rows, defects.Cols, defects.NumberOfChannels);
+                                    defects.CopyTo(m);
+
+                                    // Draw tha defacts
+                                    for (int d = 0; d < m.Rows; d++)
+                                    {
+                                        int startIndex = m.Data[d, 0];
+                                        int endIndex = m.Data[d, 1];
+                                        int farthestIndex = m.Data[d, 2];
+
+                                        Point farthestPoint = contourPoints[farthestIndex];
+                                        Point startPoint = contourPoints[startIndex];
+                                        CvInvoke.Circle(mFrame, startPoint, 3, new MCvScalar(255, 0, 0), 2);
+                                    }
+                                }
                             }
 
                             (Controls["FrameImageBox"] as ImageBox).Image = mFrame;
