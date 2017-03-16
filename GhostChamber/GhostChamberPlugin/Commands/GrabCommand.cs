@@ -12,7 +12,8 @@ namespace GhostChamberPlugin.Commands
 
 		public void Do(Vector3d position)
 		{
-			camera.Pan(position.X, -position.Y);
+			Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
+			camera.Pan(position.X, position.Y);
 		}
 
 		[CommandMethod("GHOSTPLUGINS", "GHOSTGRAB", CommandFlags.Modal)]

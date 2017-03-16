@@ -16,7 +16,7 @@ namespace GhostChamberPlugin.CommandGestureBindings
 
         public bool IsGestureActive(IList<Body> skeletons, int bodyCount)
         {
-            return gesture.IsActive(skeletons, bodyCount);
+			return gesture.IsActive(skeletons, bodyCount);
         }
 
         public void Update(IList<Body> skeletons, int bodyCount)

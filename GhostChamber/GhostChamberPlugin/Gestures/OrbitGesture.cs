@@ -93,7 +93,7 @@ namespace GhostChamberPlugin.Gestures
                 if (!IsGestureActive(activeBody))
                 {
                     activeBody = null;
-                    Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DEACTIVATED\n");
+                    //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DEACTIVATED\n");
                 }
             }
 
