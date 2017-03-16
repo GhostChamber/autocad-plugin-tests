@@ -33,7 +33,8 @@ namespace GhostChamberPlugin
 		{
             {GestureType.ZOOM, new ZoomBinding()},
             {GestureType.ORBIT, new OrbitBinding()},
-            {GestureType.PAN, new PanBinding()}
+            {GestureType.PAN, new PanBinding()},
+			{GestureType.GRAB, new GrabBinding() }
 		};
 
 		public PluginMain()
