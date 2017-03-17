@@ -18,14 +18,14 @@ namespace GhostChamberPlugin.CommandGestureBindings
         private const double X_ROTATION_MULTIPLIER = 3.0;
         private const double Y_ROTATION_MULTIPLIER = 1.5;
 
-        public bool IsGestureActive(IList<Body> skeletons, int bodyCount)
+        public bool IsGestureActive(IList<Body> skeletons)
         {
-            return gesture.IsActive(skeletons, bodyCount);
+            return gesture.IsActive(skeletons);
         }
 
-        public void Update(IList<Body> skeletons, int bodyCount)
+        public void Update()
         {
-            Vector3d movement = gesture.Update(skeletons, bodyCount);
+            Vector3d movement = gesture.Update();
             if (movement.Length > 0.0)
             {
                 command.Do(Vector3d.ZAxis, -1*movement.X * X_ROTATION_MULTIPLIER);

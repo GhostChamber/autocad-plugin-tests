@@ -16,11 +16,11 @@ namespace GhostChamberPlugin.Gestures
 		private double PAN_COMMAND_THRESHOLD = 0.0005f;// Minimum distance for left hand to move to be registered as a movement.
 		private float PAN_COMMAND_MULTIPLIER = -50.0f; // Multiplier to convert from real world distance to AutoCAD viewport distance.
 
-		public bool IsActive(IList<Body> skeletons, int bodyCount)
+		public bool IsActive(IList<Body> skeletons)
 		{
 			if (activeBody == null && skeletons != null)
 			{
-				for (int i = 0; i < bodyCount; i++)
+				for (int i = 0; i < skeletons.Count; i++)
 				{
 					Body body = skeletons[i];
 					if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) > 0.02f) // check if hand is above the shoulder
@@ -37,7 +37,7 @@ namespace GhostChamberPlugin.Gestures
 			return (activeBody != null);
 		}
 
-		public Vector3d Update(IList<Body> skeletons, int bodyCount)
+		public Vector3d Update()
 		{
 			Vector3d movement = new Vector3d(0.0, 0.0, 0.0);
 

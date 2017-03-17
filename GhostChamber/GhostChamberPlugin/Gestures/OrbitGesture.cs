@@ -24,14 +24,13 @@ namespace GhostChamberPlugin.Gestures
 
         public OrbitGesture()
         {
-
         }
 
-        public bool IsActive(IList<Body> skeletons, int bodyCount)
+        public bool IsActive(IList<Body> skeletons)
         {
             if (activeBody == null && skeletons != null)
             {
-                for (int i = 0; i < bodyCount; ++i)
+                for (int i = 0; i < skeletons.Count; ++i)
                 {
                     Microsoft.Kinect.Body body = skeletons[i];
 
@@ -50,7 +49,7 @@ namespace GhostChamberPlugin.Gestures
             return (activeBody != null);
         }
 
-        public bool IsGestureActive(Body body)
+        private bool IsGestureActive(Body body)
         {
             if  (body.Joints[JointType.Head].Position.Y == 0.0f)
             {
@@ -61,16 +60,12 @@ namespace GhostChamberPlugin.Gestures
                body.Joints[JointType.HandRight].Position.Z < body.Joints[JointType.Head].Position.Z - GestureUtils.CAPTURE_DEPTH_OFFSET)
             {
                 return true;
-                //if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbRight], body.Joints[JointType.HandTipRight]) < GestureUtils.CLAMP_THRESHOLD)
-                //{
-                //    return true;
-                //}
             }
 
             return false;
         }
 
-        public Vector3d Update(IList<Body> skeletons, int bodyCount)
+        public Vector3d Update()
         {
             Vector3d movement = new Vector3d(0.0, 0.0, 0.0);
 

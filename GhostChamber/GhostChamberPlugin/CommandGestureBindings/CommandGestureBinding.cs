@@ -12,10 +12,10 @@ namespace GhostChamberPlugin.CommandGestureBindings
 	{
 		/** Checks if the current gesture is active or not
 		 */
-		bool IsGestureActive(IList<Body> skeletons, int bodyCount);
+		bool IsGestureActive(IList<Body> skeletons);
 
 		/** Calls the Update method of the Gesture and pass the return value to the bound command
 		 */
-		void Update(IList<Body> skeletons, int bodyCount);
+		void Update();
 	}
 }

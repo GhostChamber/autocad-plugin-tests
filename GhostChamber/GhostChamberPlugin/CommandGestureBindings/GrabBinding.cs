@@ -14,14 +14,14 @@ namespace GhostChamberPlugin.CommandGestureBindings
 		private GrabCommand command = new GrabCommand();
 		private GrabGesture gesture = new GrabGesture();
 
-		public bool IsGestureActive(IList<Body> skeletons, int bodyCount)
+		public bool IsGestureActive(IList<Body> skeletons)
 		{
-			return gesture.IsActive(skeletons, bodyCount);
+			return gesture.IsActive(skeletons);
 		}
 
-		public void Update(IList<Body> skeletons, int bodyCount)
+		public void Update()
 		{
-			command.Do(gesture.Update(skeletons, bodyCount));
+			command.Do(gesture.Update());
 		}
 	}
 }

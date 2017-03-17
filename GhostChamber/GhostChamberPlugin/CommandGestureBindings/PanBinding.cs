@@ -14,14 +14,14 @@ namespace GhostChamberPlugin.CommandGestureBindings
         private PanCommand command = new PanCommand();
         private PanGesture gesture = new PanGesture();
 
-        public bool IsGestureActive(IList<Body> skeletons, int bodyCount)
+        public bool IsGestureActive(IList<Body> skeletons)
         {
-			return gesture.IsActive(skeletons, bodyCount);
+            return gesture.IsActive(skeletons);
         }
 
-        public void Update(IList<Body> skeletons, int bodyCount)
+        public void Update()
         {
-            command.Do(gesture.Update(skeletons, bodyCount));
+            command.Do(gesture.Update());
         }
     }
 }

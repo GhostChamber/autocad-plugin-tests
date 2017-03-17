@@ -16,11 +16,11 @@ namespace GhostChamberPlugin.Gestures
 		private double zoomRightStart;
 		private double zoomRight;
 
-        public bool IsActive(IList<Body> skeletons, int bodyCount)
+        public bool IsActive(IList<Body> skeletons)
 		{
 			if (activeBody == null && skeletons != null)
 			{
-				for (int i = 0; i < bodyCount; i++)
+				for (int i = 0; i < skeletons.Count; i++)
 				{
 					Microsoft.Kinect.Body body = skeletons[i];
                     if (IsGestureActive(body))
@@ -52,16 +52,12 @@ namespace GhostChamberPlugin.Gestures
                 {
                     return true;
                 }
-                //if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbRight], body.Joints[JointType.HandTipRight]) > GestureUtils.CLAMP_THRESHOLD)
-                //{
-                //    return true;
-                //}
             }
 
             return false;
         }
 
-        public double Update(IList<Body> skeletons, int bodyCount)
+        public double Update()
 		{
 
 			if (activeBody != null)
