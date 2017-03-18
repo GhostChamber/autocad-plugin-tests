@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.EditorInput;
 using GhostChamberPlugin.Commands;
 using GhostChamberPlugin.Gestures;
 using Microsoft.Kinect;
@@ -21,7 +23,12 @@ namespace GhostChamberPlugin.CommandGestureBindings
 
 		public void Update()
 		{
-			command.Do(gesture.Update());
+			Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
+			for (uint viewportNum = 2; viewportNum < 6; ++viewportNum)
+			{
+				editor.Command("CVPORT", viewportNum);
+				command.Do(gesture.Update());
+			}
 		}
 	}
 }

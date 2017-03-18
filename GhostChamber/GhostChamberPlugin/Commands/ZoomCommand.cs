@@ -18,7 +18,12 @@ namespace GhostChamberPlugin.Commands
 		public void Command()
 		{
 			double zoomFactor = double.Parse(editor.GetString("Zoom Factor: ").StringResult);
-			Do(zoomFactor);
+			for (uint viewportNum = 2; viewportNum < 6; ++viewportNum)
+			{
+				editor.Command("CVPORT", viewportNum.ToString());
+				Do(zoomFactor);
+			}
+			//Do(zoomFactor);
 		}
 	}
 }

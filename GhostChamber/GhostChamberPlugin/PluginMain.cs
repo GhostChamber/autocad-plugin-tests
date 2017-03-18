@@ -7,7 +7,6 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
 using GhostChamberPlugin.CommandGestureBindings;
-using GhostChamberPlugin.Gestures;
 using Microsoft.Kinect;
 
 namespace GhostChamberPlugin
@@ -141,15 +140,64 @@ namespace GhostChamberPlugin
 			try
 			{
 				// Create and use our jig, disposing afterwards
-				using (var plugin = new PluginMain())
-				{
-					editor.Drag(plugin);
-				}
+				//using (var plugin = new PluginMain())
+				//{
+				//	editor.Drag(plugin);
+				//}
+				SetupViewports(editor);
 			}
 			catch (System.Exception ex)
 			{
 				editor.WriteMessage("\nUnable to start Kinect sensor: " + ex.Message);
 			}
+		}
+
+		public void SetupViewports(Editor editor)
+		{
+			PromptPointOptions ppo = new PromptPointOptions("\nSpecify the center:");
+			PromptPointResult ppr = editor.GetPoint(ppo);
+			if (ppr.Status != PromptStatus.OK)
+			{
+				return;
+			}
+			Point2d center = new Point2d(ppr.Value.X, ppr.Value.Y);
+
+			// Left viewport is 2, Right viewport is 3
+			// Top viewport is 4, Bottom viewport is 5
+			// Highly hardcoded :(
+			editor.Command("-VPORTS", "SI");
+
+			editor.Command("-VPORTS", "3", "V");
+			editor.Command("CVPORT", "4");
+			editor.Command("-VPORTS", "2", "H");
+
+			editor.Command("UCSFOLLOW", "1");
+
+			GhostChamberPlugin.Commands.Camera camera = new GhostChamberPlugin.Commands.Camera(Application.DocumentManager.MdiActiveDocument);
+
+			// Left
+			editor.Command("CVPORT", "2");
+			ViewTableRecord view = editor.GetCurrentView();
+			camera.Pan(center.X + 5, center.Y - (view.Height / 2.8));
+			camera.Zoom(0.5);
+			// Right
+			editor.Command("CVPORT", "3");
+			editor.Command("UCS", "Z", "180");
+			view = editor.GetCurrentView();
+			camera.Pan(center.X + 5, center.Y - (view.Height / 2.8));
+			camera.Zoom(0.5);
+			// Top
+			editor.Command("CVPORT", "4");
+			editor.Command("UCS", "Z", "-90");
+			view = editor.GetCurrentView();
+			camera.Pan(center.X - (view.Width / 5), center.Y - (view.Height / 2.8));
+			camera.Zoom(0.3);
+			// Bottom
+			editor.Command("CVPORT", "5");
+			editor.Command("UCS", "Z", "90");
+			view = editor.GetCurrentView();
+			camera.Pan(center.X - (view.Width / 5), center.Y - (view.Height / 2.8));
+			camera.Zoom(0.3);
 		}
 	}
 }
