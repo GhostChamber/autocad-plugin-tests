@@ -23,8 +23,7 @@ namespace GhostChamberPlugin.Gestures
 				for (int i = 0; i < bodyCount; i++)
 				{
 					Body body = skeletons[i];
-					if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) > 0.02f) // check if hand is above the shoulder
-						&& (body?.HandLeftState == HandState.Closed))
+					if (GestureUtils.IsGrabGestureActive(body))
 					{
 						activeBody = body;
 						startPosition = activeBody.Joints[JointType.HandLeft].Position;

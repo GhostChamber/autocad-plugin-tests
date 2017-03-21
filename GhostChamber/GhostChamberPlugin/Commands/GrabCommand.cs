@@ -12,7 +12,7 @@ namespace GhostChamberPlugin.Commands
 
 		public void Do(Vector3d position)
 		{
-			Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
+			//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
 			camera.Pan(position.X, position.Y);
 		}
 
