@@ -98,15 +98,7 @@ namespace GhostChamberPlugin.Utilities
             if ((Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD) &&
                 (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD))
             {
-                //if (body.Joints[JointType.HandRight].Position.Z > body.Joints[JointType.Head].Position.Z - GestureUtils.CAPTURE_DEPTH_OFFSET &&
-                //    body.Joints[JointType.HandLeft].Position.Z > body.Joints[JointType.Head].Position.Z - GestureUtils.CAPTURE_DEPTH_OFFSET)
-                //{
-                    return true;
-                //}
-                //if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbRight], body.Joints[JointType.HandTipRight]) > GestureUtils.CLAMP_THRESHOLD)
-                //{
-                //    return true;
-                //}
+                return true;
             }
 
             return false;
