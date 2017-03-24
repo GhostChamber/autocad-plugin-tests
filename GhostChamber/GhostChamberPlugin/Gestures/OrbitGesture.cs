@@ -18,6 +18,7 @@ namespace GhostChamberPlugin.Gestures
         private CameraSpacePoint toolStartPosition;
         private CameraSpacePoint toolPreviousPosition;
         private CameraSpacePoint toolPosition;
+        private bool previouslyActive = false;
 
         const double ROTATION_COMMAND_THRESHOLD = 0.005f;
         const int SMOOTHING_WINDOW = 5;
@@ -52,19 +53,29 @@ namespace GhostChamberPlugin.Gestures
 
         public bool IsGestureActive(Body body)
         {
+            
             if  (body.Joints[JointType.Head].Position.Y == 0.0f)
             {
                 return false;
             }
 
-            if(Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD &&
-               body.Joints[JointType.HandRight].Position.Z < body.Joints[JointType.Head].Position.Z - GestureUtils.CAPTURE_DEPTH_OFFSET)
+            if(body.HandRightState == HandState.Closed)
             {
-                return true;
-                //if (GestureUtils.GetJointDistance(body.Joints[JointType.ThumbRight], body.Joints[JointType.HandTipRight]) < GestureUtils.CLAMP_THRESHOLD)
-                //{
-                //    return true;
-                //}
+                if (previouslyActive)
+                {
+                    return true;
+                }
+                else
+                {
+                    if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
 
             return false;
