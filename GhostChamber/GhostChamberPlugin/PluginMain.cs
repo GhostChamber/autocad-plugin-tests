@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
 using GhostChamberPlugin.CommandGestureBindings;
 using GhostChamberPlugin.Gestures;
+using GhostChamberPlugin.Utilities;
 using Microsoft.Kinect;
 
 namespace GhostChamberPlugin
@@ -17,6 +18,7 @@ namespace GhostChamberPlugin
 		// Kinect sensor and depth and color frame reader
 		private KinectSensor _kinect = null;
 		private MultiSourceFrameReader _frameReader = null;
+        private GestureMessenger _messenger = null;
 
 		// List of all active skeletons
 		private IList<Microsoft.Kinect.Body> _skeletons = null;
@@ -58,7 +60,10 @@ namespace GhostChamberPlugin
 				_kinect.Open();
 				_frameReader = _kinect.OpenMultiSourceFrameReader(FrameSourceTypes.Body);
 			}
-		}
+
+            _messenger = new GestureMessenger();
+            _messenger.ConnectToListener();
+        }
 
 		protected override SamplerStatus Sampler(JigPrompts prompts)
 		{
@@ -77,6 +82,7 @@ namespace GhostChamberPlugin
 						if (binding.Value.IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
 						{
 							_currentGesture = binding.Key;
+                            _messenger.SendGestureMessage(_currentGesture);
 							//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
 							break;
 						}
@@ -89,8 +95,9 @@ namespace GhostChamberPlugin
 					if (!_gestureMapping[_currentGesture].IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
 					{
 						_currentGesture = GestureType.NONE;
-						//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
-					}
+                        _messenger.SendGestureMessage(_currentGesture);
+                        //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
+                    }
 				}
 
 				var frame = _frameReader.AcquireLatestFrame();
@@ -131,6 +138,8 @@ namespace GhostChamberPlugin
 			{
 				_kinect.Close();
 			}
+
+            _messenger.DisconnectFromListener();
 		}
 	}
 
