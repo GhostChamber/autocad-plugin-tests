@@ -15,7 +15,7 @@ namespace GhostChamberPlugin.Commands
 			camera.Orbit(axis, angle);
 		}
 
-		[CommandMethod("GHOSTPLUGINS", "GHOSTORBIT", CommandFlags.Modal)]
+		[CommandMethod("GHOSTCHAMBER", "GHOSTORBIT", CommandFlags.Modal)]
 		public void Command()
 		{
 			string axisName = editor.GetString("Orbit Axis: ").StringResult;

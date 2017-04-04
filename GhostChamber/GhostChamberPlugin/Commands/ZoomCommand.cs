@@ -14,7 +14,7 @@ namespace GhostChamberPlugin.Commands
 			camera.Zoom(zoomFactor);
 		}
 
-		[CommandMethod("GHOSTPLUGINS", "GHOSTZOOM", CommandFlags.Modal)]
+		[CommandMethod("GHOSTCHAMBER", "GHOSTZOOM", CommandFlags.Modal)]
 		public void Command()
 		{
 			double zoomFactor = double.Parse(editor.GetString("Zoom Factor: ").StringResult);
