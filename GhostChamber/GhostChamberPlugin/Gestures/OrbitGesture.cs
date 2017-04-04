@@ -18,6 +18,7 @@ namespace GhostChamberPlugin.Gestures
         private CameraSpacePoint toolStartPosition;
         private CameraSpacePoint toolPreviousPosition;
         private CameraSpacePoint toolPosition;
+        private bool previouslyActive = false;
 
         const double ROTATION_COMMAND_THRESHOLD = 0.005f;
         const int SMOOTHING_WINDOW = 5;
