@@ -9,13 +9,14 @@ namespace GhostChamberPlugin.Commands
 	{
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
-        private float panFactor = 1.0f;
+        private float panFactor = 0.0001f;
 
 		public void Do(Vector3d position)
 		{
             //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
             double panX = panFactor * camera.GetCameraWidth() * position.X;
             double panY = panFactor * camera.GetCameraHeight() * position.Y;
+
 			camera.Pan(panX, panY);
 		}
 
