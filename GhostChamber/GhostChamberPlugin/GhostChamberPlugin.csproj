@@ -141,6 +141,14 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /b/v/y "$(ProjectDir)\$(OutDir)\*.*" "$(SolutionDir)\Packaging\$(PlatformShortName)\"
+</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if not exist "$(SolutionDir)\Packaging" mkdir "$(SolutionDir)\Packaging"
+if not exist "$(SolutionDir)\Packaging" mkdir "$(SolutionDir)\Packaging\$(PlatformShortName)\"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

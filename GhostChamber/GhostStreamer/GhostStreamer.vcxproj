@@ -102,8 +102,14 @@
     </Link>
     <PostBuildEvent>
       <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
-copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"
+copy /b/v/y "$(OutDir)\*.*" "$(SolutionDir)\Packaging\$(PlatformShortName)\"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(SolutionDir)\Packaging" mkdir "$(SolutionDir)\Packaging"
+if not exist "$(SolutionDir)\Packaging\$(PlatformShortName)\" mkdir "$(SolutionDir)\Packaging\$(PlatformShortName)\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -122,8 +128,14 @@ copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
-copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"
+copy /b/v/y "$(OutDir)\*.*" "$(SolutionDir)\Packaging\$(PlatformShortName)\"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(SolutionDir)\Packaging" mkdir "$(SolutionDir)\Packaging"
+if not exist "$(SolutionDir)\Packaging\$(PlatformShortName)\" mkdir "$(SolutionDir)\Packaging\$(PlatformShortName)\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -146,8 +158,14 @@ copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
-copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"
+copy /b/v/y "$(OutDir)\*.*" "$(SolutionDir)\Packaging\$(PlatformShortName)\"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(SolutionDir)\Packaging" mkdir "$(SolutionDir)\Packaging"
+if not exist "$(SolutionDir)\Packaging\$(PlatformShortName)\" mkdir "$(SolutionDir)\Packaging\$(PlatformShortName)\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -170,8 +188,14 @@ copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
-copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"
+copy /b/v/y "$(OutDir)\*.*" "$(SolutionDir)\Packaging\$(PlatformShortName)\"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(SolutionDir)\Packaging" mkdir "$(SolutionDir)\Packaging"
+if not exist "$(SolutionDir)\Packaging\$(PlatformShortName)\" mkdir "$(SolutionDir)\Packaging\$(PlatformShortName)\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GestureIcon.cpp" />
