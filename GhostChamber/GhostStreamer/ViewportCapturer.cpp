@@ -47,7 +47,6 @@ ViewportCapturer::~ViewportCapturer()
 void ViewportCapturer::SetRect(int32 x, int32 y, int32 width, int32 height)
 {
 	mSrcWindow = GetDesktopWindow();
-	mSrcWindowDC = GetDC(mSrcWindow);
 	mX = x;
 	mY = y;
 	mWidth = width;
@@ -71,7 +70,6 @@ void ViewportCapturer::SetWindow(LPCSTR windowName, LPCSTR windowClass)
 	mSrcWindow = FindWindow(windowClass, windowName);
 	if (mSrcWindow != nullptr)
 	{
-		mSrcWindowDC = GetDC(mSrcWindow);
 		RECT windowRect;
 		GetWindowRect(mSrcWindow, &windowRect);
 		mWidth = (windowRect.right - windowRect.left) - (sCaptureClip.left + sCaptureClip.right);
@@ -230,6 +228,7 @@ void ViewportCapturer::ClearRenderingState()
 
 void ViewportCapturer::CopyPixelsFromScreen()
 {
+	mSrcWindowDC = GetDC(mSrcWindow);
 	SelectObject(mCaptureDC, mCaptureBitmap);
 	BitBlt(mCaptureDC, 0, 0, mWidth, mHeight, mSrcWindowDC, mX, mY, SRCCOPY | CAPTUREBLT);
 
