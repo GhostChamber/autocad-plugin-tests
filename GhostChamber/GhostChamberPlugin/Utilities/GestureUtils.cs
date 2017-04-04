@@ -63,10 +63,15 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
-        internal static bool IsGrabGestureActive(Body activeBody)
+        internal static bool IsGrabGestureActive(Body body)
         {
-            if ((Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) > GestureUtils.CAPTURE_THRESHOLD) // check if hand is above the shoulder
-                        && (activeBody?.HandLeftState == HandState.Closed))
+            if (body.Joints[JointType.Head].Position.Y == 0.0f)
+            {
+                return false;
+            }
+
+            if (Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) > GestureUtils.CAPTURE_THRESHOLD // check if hand is above the shoulder
+                        && body.HandLeftState == HandState.Closed)
             {
                 return true;
             }
@@ -81,7 +86,7 @@ namespace GhostChamberPlugin.Utilities
             }
 
             if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD
-                && body?.HandRightState == HandState.Closed)
+                && body.HandRightState == HandState.Closed)
             {
                 return true;
             }

@@ -63,5 +63,14 @@ namespace GhostChamberPlugin.Gestures
 
 			return movement;
 		}
+
+        //private bool IsOriginOffScreen()
+        //{
+        //    bool isOffScreen = false;
+
+        //    if(camera)
+
+        //    return isOffScreen;
+        //}
 	}
 }

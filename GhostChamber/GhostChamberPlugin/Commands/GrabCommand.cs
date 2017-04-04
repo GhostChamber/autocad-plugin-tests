@@ -16,6 +16,7 @@ namespace GhostChamberPlugin.Commands
             //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
             double panX = panFactor * camera.GetCameraWidth() * position.X;
             double panY = panFactor * camera.GetCameraHeight() * position.Y;
+
 			camera.Pan(panX, panY);
 		}
 
