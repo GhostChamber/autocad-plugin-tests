@@ -143,6 +143,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /b/v/y "$(ProjectDir)\$(OutDir)\*.*" "$(SolutionDir)\Packaging\$(PlatformShortName)\"
+copy /b/v/y "$(SolutionDir)\GhostChamber.reg" "$(SolutionDir)\Packaging\"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
