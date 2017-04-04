@@ -15,7 +15,7 @@ namespace GhostChamberPlugin.Commands
 			camera.Pan(position.X, -position.Y);
 		}
 
-		[CommandMethod("GHOSTPLUGINS", "GHOSTPAN", CommandFlags.Modal)]
+		[CommandMethod("GHOSTCHAMBER", "GHOSTPAN", CommandFlags.Modal)]
 		public void Command()
 		{
 			double horizontal = double.Parse(editor.GetString("Pan Horizontal: ").StringResult);
