@@ -63,9 +63,18 @@ namespace GhostChamberPlugin.Commands
 
 			// Set it as the current view
 			_doc.Editor.SetCurrentView(_vtr);
+        }
 
-            
+        public double GetCameraWidth()
+        {
+            _vtr = _doc.Editor.GetCurrentView();
+            return _vtr.Width;
+        }
 
+        public double GetCameraHeight()
+        {
+            _vtr = _doc.Editor.GetCurrentView();
+            return _vtr.Width;
         }
 	}
 }
