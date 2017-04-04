@@ -33,7 +33,7 @@ namespace GhostChamberPlugin.Gestures
                     if (GestureUtils.IsOrbitGestureActive(body))
                     {
                         activeBody = body;
-                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ORBIT\n");
+                        //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("ORBIT\n");
 
                         // Record right hand location
                         toolStartPosition = activeBody.Joints[JointType.HandRight].Position;
