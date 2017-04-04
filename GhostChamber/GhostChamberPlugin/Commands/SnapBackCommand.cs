@@ -10,7 +10,6 @@ namespace GhostChamberPlugin.Commands
 
         public void Do()
         {
-            //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
             camera.SnapBackInView();
         }
 

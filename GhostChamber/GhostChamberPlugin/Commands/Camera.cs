@@ -79,32 +79,16 @@ namespace GhostChamberPlugin.Commands
 
         public void SnapBackInView()
         {
-            bool isInView = false;
-
             _vtr = _doc.Editor.GetCurrentView();
             double distanceX = Point2d.Origin.X - _vtr.CenterPoint.X;
             double distanceY = Point2d.Origin.Y - _vtr.CenterPoint.Y;
             Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("OriginX = {0}\n", Point2d.Origin.X);
             Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("OriginY = {0}\n", Point2d.Origin.Y);
-
-            double moveByX = 0.0f;
-            double moveByY = 0.0f;
-
-            if(distanceX > (_vtr.Width/2))
+            
+            if((distanceX > (_vtr.Width/2)) || (distanceY > (_vtr.Height/2)))
             {
-                moveByX = distanceX;
-                isInView = true;
-            }
-
-            if(distanceY > (_vtr.Height/2))
-            {
-                moveByY = distanceY;
-                isInView = true;
-            }
-
-            if(isInView)
-            {
-                Pan(moveByX, moveByY);
+                Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("SNAP_BACK working\n");
+                Pan(distanceX, distanceY);
             }
         }
 	}

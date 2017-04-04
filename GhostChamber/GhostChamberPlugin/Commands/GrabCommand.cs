@@ -9,7 +9,7 @@ namespace GhostChamberPlugin.Commands
 	{
 		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
-        private float panFactor = 1.0f;
+        private float panFactor = 0.01f;
 
 		public void Do(Vector3d position)
 		{
