@@ -145,7 +145,7 @@ namespace GhostChamberPlugin
 
 	public class GhostCommands
 	{
-		[CommandMethod("GHOSTPLUGINS", "GHOSTGO", CommandFlags.Modal)]
+		[CommandMethod("GHOSTCHAMBER", "GHOSTGO", CommandFlags.Modal)]
 		public void GhostPluginStart()
 		{
 			var editor = Application.DocumentManager.MdiActiveDocument.Editor;
