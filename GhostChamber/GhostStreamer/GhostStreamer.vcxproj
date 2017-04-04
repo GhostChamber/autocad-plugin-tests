@@ -101,7 +101,8 @@
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"</Command>
+      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -120,7 +121,8 @@
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"</Command>
+      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -143,7 +145,8 @@
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"</Command>
+      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,7 +169,8 @@
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"</Command>
+      <Command>copy /b/v/y "$(SolutionDir)\external\Libraries\$(PlatformShortName)\*.dll" "$(OutDir)\"
+copy /b/v/y "$(ProjectDir)\*.png" "$(OutDir)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
