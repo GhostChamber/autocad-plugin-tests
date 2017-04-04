@@ -11,7 +11,7 @@ namespace GhostChamberPlugin.Commands
 		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
         private float panFactor = 0.01f;
 
-		public void Do(Vector3d position)
+		public void Do(Vector2d position)
 		{
             //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("PERFORMING GRAB\n");
             double panX = panFactor * camera.GetCameraWidth() * position.X;
@@ -26,7 +26,7 @@ namespace GhostChamberPlugin.Commands
 			double horizontal = double.Parse(editor.GetString("Pan Horizontal: ").StringResult);
 			double vertical = double.Parse(editor.GetString("Pan Vertical: ").StringResult);
 
-			Do(new Vector3d(horizontal, vertical, 0));
+			Do(new Vector2d(horizontal, vertical));
 		}
 	}
 }

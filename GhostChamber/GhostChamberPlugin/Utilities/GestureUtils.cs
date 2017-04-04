@@ -70,8 +70,8 @@ namespace GhostChamberPlugin.Utilities
                 return false;
             }
 
-            if (Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) > GestureUtils.CAPTURE_THRESHOLD // check if hand is above the shoulder
-                        && body.HandLeftState == HandState.Closed)
+            if (Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD
+                && body.HandLeftState == HandState.Closed)
             {
                 return true;
             }
@@ -85,7 +85,7 @@ namespace GhostChamberPlugin.Utilities
                 return false;
             }
 
-            if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD
+            if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD
                 && body.HandRightState == HandState.Closed)
             {
                 return true;
@@ -111,6 +111,7 @@ namespace GhostChamberPlugin.Utilities
 
         internal static bool IsSnapBackGestureActive(Body body)
         {
+            
             if (body.Joints[JointType.Head].Position.Y == 0.0f)
             {
                 return false;

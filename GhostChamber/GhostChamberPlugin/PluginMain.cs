@@ -37,7 +37,7 @@ namespace GhostChamberPlugin
             {GestureType.ORBIT, new OrbitBinding()},
             //{GestureType.PAN, new PanBinding()},
 			{GestureType.GRAB, new GrabBinding() },
-            {GestureType.SNAP_BACK, new GrabBinding()}
+            {GestureType.SNAP_BACK, new SnapBackBinding()}
 		};
 
 		public PluginMain()

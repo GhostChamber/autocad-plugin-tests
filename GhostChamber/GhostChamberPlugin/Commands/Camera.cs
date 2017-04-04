@@ -1,6 +1,7 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using System;
 
 namespace GhostChamberPlugin.Commands
 {
@@ -60,9 +61,9 @@ namespace GhostChamberPlugin.Commands
             _vtr = _doc.Editor.GetCurrentView();
 
             _vtr.ViewDirection = _vtr.ViewDirection.TransformBy(Matrix3d.Rotation(angle, axis, Point3d.Origin));
-
 			// Set it as the current view
-			_doc.Editor.SetCurrentView(_vtr);
+
+            _doc.Editor.SetCurrentView(_vtr);
         }
 
         public double GetCameraWidth()
@@ -82,10 +83,12 @@ namespace GhostChamberPlugin.Commands
             _vtr = _doc.Editor.GetCurrentView();
             double distanceX = Point2d.Origin.X - _vtr.CenterPoint.X;
             double distanceY = Point2d.Origin.Y - _vtr.CenterPoint.Y;
-            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("OriginX = {0}\n", Point2d.Origin.X);
-            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("OriginY = {0}\n", Point2d.Origin.Y);
-            
-            if((distanceX > (_vtr.Width/2)) || (distanceY > (_vtr.Height/2)))
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DistanceX = {0}\n", distanceX);
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DistanceY= {0}\n", distanceY);
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Width= {0}\n", (_vtr.Width) / 2);
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Height= {0}\n", (_vtr.Height)/2);
+
+            if ((Math.Abs(distanceX) > (_vtr.Width/2)) || (Math.Abs(distanceY) > (_vtr.Height/2)))
             {
                 Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("SNAP_BACK working\n");
                 Pan(distanceX, distanceY);
