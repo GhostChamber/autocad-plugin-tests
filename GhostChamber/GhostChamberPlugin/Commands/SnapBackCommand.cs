@@ -3,7 +3,7 @@ using Autodesk.AutoCAD.Runtime;
 
 namespace GhostChamberPlugin.Commands
 {
-    class SnapBackCommand
+    public class SnapBackCommand
     {
         private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
         //private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;

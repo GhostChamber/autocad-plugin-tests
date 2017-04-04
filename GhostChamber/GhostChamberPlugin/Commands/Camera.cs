@@ -82,8 +82,10 @@ namespace GhostChamberPlugin.Commands
             bool isInView = false;
 
             _vtr = _doc.Editor.GetCurrentView();
-            double distanceX = Point3d.Origin.X - (_vtr.Width / 2);
-            double distanceY = Point3d.Origin.Y - (_vtr.Height / 2);
+            double distanceX = Point2d.Origin.X - _vtr.CenterPoint.X;
+            double distanceY = Point2d.Origin.Y - _vtr.CenterPoint.Y;
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("OriginX = {0}\n", Point2d.Origin.X);
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("OriginY = {0}\n", Point2d.Origin.Y);
 
             double moveByX = 0.0f;
             double moveByY = 0.0f;
