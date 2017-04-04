@@ -76,5 +76,34 @@ namespace GhostChamberPlugin.Commands
             _vtr = _doc.Editor.GetCurrentView();
             return _vtr.Width;
         }
+
+        public void SnapBackInView()
+        {
+            bool isInView = false;
+
+            _vtr = _doc.Editor.GetCurrentView();
+            double distanceX = Point3d.Origin.X - (_vtr.Width / 2);
+            double distanceY = Point3d.Origin.Y - (_vtr.Height / 2);
+
+            double moveByX = 0.0f;
+            double moveByY = 0.0f;
+
+            if(distanceX > (_vtr.Width/2))
+            {
+                moveByX = distanceX;
+                isInView = true;
+            }
+
+            if(distanceY > (_vtr.Height/2))
+            {
+                moveByY = distanceY;
+                isInView = true;
+            }
+
+            if(isInView)
+            {
+                Pan(moveByX, moveByY);
+            }
+        }
 	}
 }
