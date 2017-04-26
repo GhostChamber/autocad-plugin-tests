@@ -1,0 +1,53 @@
+#pragma once
+
+enum class StreamType
+{
+	REPLICATED = 0,
+	INDIVIDUAL = 1,
+
+	NUM_STREAM_TYPES = 2
+};
+
+
+enum class CommandState
+{
+	LISTENING,
+	WAITING_FIRST_POINT,
+	WAITING_SECOND_POINT
+};
+
+enum class HotkeyID
+{
+	COMMAND_VIEWPORT_1,
+	COMMAND_VIEWPORT_2,
+	COMMAND_VIEWPORT_3,
+	COMMAND_VIEWPORT_4,
+	FLIP_TEXCOORDS,
+	TOGGLE_STREAM_TYPE,
+	COMMAND_REPLICATED_VIEWPORT,
+	SELECT_POINT
+};
+
+enum class GhostGesture
+{
+	NONE,
+	GRAB,
+	ZOOM,
+	ORBIT
+};
+
+enum class GhostMessage
+{
+	NO_GESTURE = 0,
+	ZOOM = 1,
+	PAN = 2,
+	GRAB = 3,
+	ORBIT = 4
+};
+
+enum class ListenerState
+{
+	INACTIVE,
+	LISTENING,
+	CONNECTED
+};

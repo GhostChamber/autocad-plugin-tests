@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Message.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgMouse.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamManager.cpp" />
+    <ClCompile Include="InputState.cpp" />
+    <ClCompile Include="ViewportCapturer.cpp" />
+    <ClCompile Include="ViewportTexture.cpp" />
+    <ClCompile Include="GestureListener.cpp" />
+    <ClCompile Include="GestureIcon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="Shaders.h" />
+    <ClInclude Include="Message.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgMouse.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h" />
+    <ClInclude Include="ViewportTexture.h" />
+    <ClInclude Include="StreamManager.h" />
+    <ClInclude Include="ViewportCapturer.h" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="Enums.h" />
+    <ClInclude Include="InputState.h" />
+    <ClInclude Include="GestureListener.h" />
+    <ClInclude Include="GestureIcon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Messages">
+      <UniqueIdentifier>{51adf1f8-e432-456a-8917-44724393782e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
