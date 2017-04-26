@@ -1,8 +1,6 @@
 ﻿using Microsoft.Kinect;
-using System;
 using System.Collections.Generic;
 using GhostChamberPlugin.Utilities;
-using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Gestures

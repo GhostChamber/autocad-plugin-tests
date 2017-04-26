@@ -3,11 +3,10 @@ using System;
 using System.Collections.Generic;
 using GhostChamberPlugin.Utilities;
 using Autodesk.AutoCAD.Geometry;
-using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Gestures
 {
-	class GrabGesture : Gesture
+    class GrabGesture : Gesture
 	{
 		private Body activeBody = null;
 

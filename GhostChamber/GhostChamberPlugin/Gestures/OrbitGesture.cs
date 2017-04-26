@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Kinect;
 using GhostChamberPlugin.Utilities;
-using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Geometry;
 
 
@@ -14,7 +9,7 @@ namespace GhostChamberPlugin.Gestures
 {
     public sealed class OrbitGesture : Gesture
     {
-        private Microsoft.Kinect.Body activeBody = null;
+        private Body activeBody = null;
         private CameraSpacePoint toolStartPosition;
         private CameraSpacePoint toolPreviousPosition;
         private CameraSpacePoint toolPosition;
@@ -28,7 +23,7 @@ namespace GhostChamberPlugin.Gestures
             {
                 for (int i = 0; i < bodyCount; ++i)
                 {
-                    Microsoft.Kinect.Body body = skeletons[i];
+                    Body body = skeletons[i];
 
                     if (GestureUtils.IsOrbitGestureActive(body))
                     {

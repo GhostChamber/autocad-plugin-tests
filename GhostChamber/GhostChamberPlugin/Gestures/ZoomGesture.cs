@@ -7,7 +7,7 @@ namespace GhostChamberPlugin.Gestures
 {
     public sealed class ZoomGesture : Gesture
 	{
-		private Microsoft.Kinect.Body activeBody = null;
+		private Body activeBody = null;
 
 		private double currentZoom = 1.0;
 		private float zoomScale = 1.0f;
@@ -24,7 +24,7 @@ namespace GhostChamberPlugin.Gestures
 			{
 				for (int i = 0; i < bodyCount; i++)
 				{
-					Microsoft.Kinect.Body body = skeletons[i];
+                    Body body = skeletons[i];
                     if (GestureUtils.IsZoomGestureActive(body))
 					{
 						activeBody = body;

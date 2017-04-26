@@ -1,49 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
-using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
 using GhostChamberPlugin.CommandGestureBindings;
-using GhostChamberPlugin.Gestures;
 using GhostChamberPlugin.Utilities;
 using Microsoft.Kinect;
 
 namespace GhostChamberPlugin
 {
-	class PluginMain : DrawJig, IDisposable
+    /**
+     * The PluginMain class extends DrawJig and IDisposable. This class is the entry point to the plugin.
+     */
+    class PluginMain : DrawJig, IDisposable
 	{
-		// Kinect sensor and depth and color frame reader
-		private KinectSensor _kinect = null;
-		private MultiSourceFrameReader _frameReader = null;
-        private GestureMessenger _messenger = null;
-
-		// List of all active skeletons
-		private IList<Microsoft.Kinect.Body> _skeletons = null;
-
-		// Should near mode and seated skeleton tracking be enabled
-		private bool _nearMode = false;
-		internal bool NearMode
+        private KinectSensor kinect = null;                             /**< The reference to the Kinect Sensor. */
+		private MultiSourceFrameReader frameReader = null;              /**< The depth and color frame reader  */
+        private GestureMessenger messenger = null;                      /**< The GestureMessenger is used by the GhostStreamer system to assign which gesture is being used. */
+		private IList<Body> skeletons = null;                           /**< List of all active skeletons. */
+        private bool nearMode = false;                                  /**< Whether near mode and seated skeleton tracking be enabled*/
+        
+        /**
+         * Set the property NearMode.
+         */
+        internal bool NearMode
 		{
-			get { return _nearMode; }
+			get { return nearMode; }
 		}
 
-		private GestureType _currentGesture = GestureType.NONE;
-        private Dictionary<GestureType, CommandGestureBinding> _gestureMapping = new Dictionary<GestureType, CommandGestureBinding>()
-        {
-            {GestureType.ZOOM, new ZoomBinding()},
-            {GestureType.ORBIT, new OrbitBinding()},
-            //{GestureType.PAN, new PanBinding()},
-			{GestureType.GRAB, new GrabBinding() },
-            {GestureType.SNAP_BACK, new SnapBackBinding()}
-		};
-
-		public PluginMain()
+		private GestureType currentGesture = GestureType.NONE;          /**< The gesture currently being read by the Kinect. */
+		private Dictionary<GestureType, CommandGestureBinding> gestureMapping = new Dictionary<GestureType, CommandGestureBinding>()
 		{
-			_kinect = KinectSensor.GetDefault();
-			if (_kinect == null)
+			{GestureType.ZOOM, new ZoomBinding()},
+			{GestureType.ORBIT, new OrbitBinding()},
+			{GestureType.GRAB, new GrabBinding()},
+			{GestureType.SNAP_BACK, new SnapBackBinding()}
+		};                                                              /**< The Dictionary Container for GestureType, CommandGestureBinding pairs. */
+
+        /**
+         * The default constructor of class PluginMain.
+         */
+        public PluginMain()
+		{
+			kinect = KinectSensor.GetDefault();
+			if (kinect == null)
 			{
 				Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("\nCannot find Kinect device.");
 			}
@@ -51,20 +52,20 @@ namespace GhostChamberPlugin
 			{
 				try
 				{
-					_nearMode = (short)Application.GetSystemVariable("KINNEAR") == 1;
+					nearMode = (short)Application.GetSystemVariable("KINNEAR") == 1;
 				}
 				catch
 				{
-					_nearMode = false;
+					nearMode = false;
 				}
 				// Initialise the Kinect sensor
-				_kinect.Open();
-				_frameReader = _kinect.OpenMultiSourceFrameReader(FrameSourceTypes.Body);
+				kinect.Open();
+				frameReader = kinect.OpenMultiSourceFrameReader(FrameSourceTypes.Body);
 			}
 
-            _messenger = new GestureMessenger();
-            _messenger.ConnectToListener();
-        }
+			messenger = new GestureMessenger();
+			messenger.ConnectToListener();
+		}
 
 		protected override SamplerStatus Sampler(JigPrompts prompts)
 		{
@@ -76,43 +77,41 @@ namespace GhostChamberPlugin
 			var ppr = prompts.AcquirePoint(opts);
 			if (ppr.Status == PromptStatus.OK)
 			{
-				if (_currentGesture == GestureType.NONE)
+				if (currentGesture == GestureType.NONE)
 				{
-					foreach (var binding in _gestureMapping)
+					foreach (var binding in gestureMapping)
 					{
-						if (binding.Value.IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
+						if (binding.Value.IsGestureActive(skeletons, kinect.BodyFrameSource.BodyCount))
 						{
-							_currentGesture = binding.Key;
-                            _messenger.SendGestureMessage(_currentGesture);
-							//Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
+							currentGesture = binding.Key;
+							messenger.SendGestureMessage(currentGesture);
 							break;
 						}
 					}
 				}
 
-				if (_currentGesture != GestureType.NONE)
+				if (currentGesture != GestureType.NONE)
 				{
-					_gestureMapping[_currentGesture].Update(_skeletons, _kinect.BodyFrameSource.BodyCount);
-					if (!_gestureMapping[_currentGesture].IsGestureActive(_skeletons, _kinect.BodyFrameSource.BodyCount))
+					gestureMapping[currentGesture].Update(skeletons, kinect.BodyFrameSource.BodyCount);
+					if (!gestureMapping[currentGesture].IsGestureActive(skeletons, kinect.BodyFrameSource.BodyCount))
 					{
-						_currentGesture = GestureType.NONE;
-                        _messenger.SendGestureMessage(_currentGesture);
-                        //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"Gesture Type = {_currentGesture}\n");
-                    }
+						currentGesture = GestureType.NONE;
+						messenger.SendGestureMessage(currentGesture);
+					}
 				}
 
-				var frame = _frameReader.AcquireLatestFrame();
+				var frame = frameReader.AcquireLatestFrame();
 				if (frame != null)
 				{
 					using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
 					{
 						if (bodyFrame != null)
 						{
-							if (_skeletons == null)
+							if (skeletons == null)
 							{
-								_skeletons = new Microsoft.Kinect.Body[_kinect.BodyFrameSource.BodyCount];
+								skeletons = new Body[kinect.BodyFrameSource.BodyCount];
 							}
-							bodyFrame.GetAndRefreshBodyData(_skeletons);
+							bodyFrame.GetAndRefreshBodyData(skeletons);
 						}
 					}
 				}
@@ -135,12 +134,12 @@ namespace GhostChamberPlugin
 		public void Dispose()
 		{
 			// Uninitialise the Kinect sensor
-			if (_kinect != null)
+			if (kinect != null)
 			{
-				_kinect.Close();
+				kinect.Close();
 			}
 
-            _messenger.DisconnectFromListener();
+			messenger.DisconnectFromListener();
 		}
 	}
 

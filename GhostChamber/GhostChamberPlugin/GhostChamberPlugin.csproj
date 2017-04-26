@@ -115,12 +115,10 @@
     <Compile Include="CommandGestureBindings\CommandGestureBinding.cs" />
     <Compile Include="CommandGestureBindings\GrabBinding.cs" />
     <Compile Include="CommandGestureBindings\OrbitBinding.cs" />
-    <Compile Include="CommandGestureBindings\PanBinding.cs" />
     <Compile Include="CommandGestureBindings\SnapBackBinding.cs" />
     <Compile Include="CommandGestureBindings\ZoomBinding.cs" />
     <Compile Include="Commands\GrabCommand.cs" />
     <Compile Include="Commands\OrbitCommand.cs" />
-    <Compile Include="Commands\PanCommand.cs" />
     <Compile Include="Commands\SnapBackCommand.cs" />
     <Compile Include="Commands\ZoomCommand.cs" />
     <Compile Include="Experiments\BodyTracker.cs" />
@@ -131,7 +129,6 @@
     <Compile Include="Gestures\GestureType.cs" />
     <Compile Include="Gestures\GrabGesture.cs" />
     <Compile Include="Gestures\OrbitGesture.cs" />
-    <Compile Include="Gestures\PanGesture.cs" />
     <Compile Include="Gestures\SnapBackGesture.cs" />
     <Compile Include="Gestures\ZoomGesture.cs" />
     <Compile Include="Experiments\KinectSkeletons.cs" />
