@@ -143,9 +143,13 @@ namespace GhostChamberPlugin
 		}
 	}
 
+    /**
+     * GhostCommands is the entry point of the plugin application and is invoked by the command 'GHHOSTGO' from the AutoCAD editor. 
+     * Please note that the plugin needs to be installed for this to work.
+     */
 	public class GhostCommands
 	{
-		[CommandMethod("GHOSTPLUGINS", "GHOSTGO", CommandFlags.Modal)]
+		[CommandMethod("GHOSTCHAMBER", "GHOSTGO", CommandFlags.Modal)]
 		public void GhostPluginStart()
 		{
 			var editor = Application.DocumentManager.MdiActiveDocument.Editor;
