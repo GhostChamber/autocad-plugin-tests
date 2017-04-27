@@ -5,19 +5,25 @@ using System.Collections.Generic;
 
 namespace GhostChamberPlugin.Gestures
 {
+    /**
+     * ZoomGesture implements the Gesture interface. This gesture uses both the arms to zoom into or out of the image.
+     */
     public sealed class ZoomGesture : Gesture
 	{
-		private Body activeBody = null;
+		private Body activeBody = null;         /**< The body that we are currently reading the gestures of. */
+        private double currentZoom = 1.0;       /**< The zoom value in this frame. */
+		private float zoomScale = 1.0f;         /**< Scale used to change the speed at which you zoom in and out. Currently set to 1*/
+        private double minHandDistance = 0.15;  /**< Minimum valid distance between hands */
+        private double maxHandDistance = 0.85;  /**< Maximum valid distance between hands */
+        private double zoomRightStart;          /**< The position of right hand at the start of calculation. */
+		private double zoomRight;               /**< The position of right hand moved during the frame. */
 
-		private double currentZoom = 1.0;
-		private float zoomScale = 1.0f;
-
-        private double minHandDistance = 0.15;
-        private double maxHandDistance = 0.85;
-
-        private double zoomRightStart;
-		private double zoomRight;
-
+        /**
+        * Implementation of Gesture.IsActive. Checks if gesture is active and if so, initializes the gesture.
+        * @param skeletons is the list of Body objects found by the Kinect.
+        * @param bodyCount is the number of bodies found in the skeletons list.
+        * @return true if the gesture is active.
+        */
         public bool IsActive(IList<Body> skeletons, int bodyCount)
 		{
 			if (activeBody == null && skeletons != null)
@@ -39,6 +45,12 @@ namespace GhostChamberPlugin.Gestures
 			return (activeBody != null);
 		}
 
+        /**
+         * The Update method that runs every frame to return the calculated double based on gesture input.
+         * @param skeletons is the list of Body objects found by the Kinect.
+         * @param bodyCount is the number of bodies found in the skeletons list.
+         * @return the calculated double for this frame with respect to the gesture movement read.
+         */
         public double Update(IList<Body> skeletons, int bodyCount)
 		{
 
@@ -68,6 +80,11 @@ namespace GhostChamberPlugin.Gestures
 			return 1;
 		}
 
+        /**
+         * Helper method to calculate the zoomFactor.
+         * @param handDistance distance between the hands.
+         * @param zoomOut if user is zooming in or out.
+         */
         private double calculateZoomFactor(double handDistance, bool zoomOut)
         {
             double zoomFraction = ((handDistance - minHandDistance) / (maxHandDistance - minHandDistance));

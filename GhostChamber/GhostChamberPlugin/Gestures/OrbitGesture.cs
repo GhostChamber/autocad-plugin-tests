@@ -7,16 +7,24 @@ using Autodesk.AutoCAD.Geometry;
 
 namespace GhostChamberPlugin.Gestures
 {
+    /**
+     * Checks if user used the Grab gesture with their right hand, and if so, performs the orbit based on the gesture.
+     */
     public sealed class OrbitGesture : Gesture
     {
-        private Body activeBody = null;
-        private CameraSpacePoint toolStartPosition;
-        private CameraSpacePoint toolPreviousPosition;
-        private CameraSpacePoint toolPosition;
+        private Body activeBody = null;                     /**< The body that we are currently reading the gestures of. */
+        private CameraSpacePoint toolStartPosition;         /**< The position of camera at the start of the gesture. */
+        private CameraSpacePoint toolPreviousPosition;      /**< The position of the camera in the previous frame. */
+        private CameraSpacePoint toolPosition;              /**< The position of camera in the current frame. */
 
-        const double ROTATION_COMMAND_THRESHOLD = 0.005f;
-        const int SMOOTHING_WINDOW = 5;
+        const double ROTATION_COMMAND_THRESHOLD = 0.005f;   /**< Const double value used to check if the movement is at least this much to account for jitter. */
 
+        /**
+        * Implementation of Gesture.IsActive. Checks if gesture is active and if so, initializes the gesture.
+        * @param skeletons is the list of Body objects found by the Kinect.
+        * @param bodyCount is the number of bodies found in the skeletons list.
+        * @return true if the gesture is active.
+        */
         public bool IsActive(IList<Body> skeletons, int bodyCount)
         {
             if (activeBody == null && skeletons != null)
@@ -40,6 +48,12 @@ namespace GhostChamberPlugin.Gestures
             return (activeBody != null);
         }
 
+        /**
+         * The Update method that runs every frame to return the calculated Vector3d based on gesture input.
+         * @param skeletons is the list of Body objects found by the Kinect.
+         * @param bodyCount is the number of bodies found in the skeletons list.
+         * @return the calculated Vector3d for this frame with respect to the gesture movement read.
+         */
         public Vector3d Update(IList<Body> skeletons, int bodyCount)
         {
             Vector3d movement = new Vector3d(0.0, 0.0, 0.0);
@@ -63,7 +77,6 @@ namespace GhostChamberPlugin.Gestures
                 if (activeBody.HandRightState != HandState.Closed)
                 {
                     activeBody = null;
-                    //Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DEACTIVATED\n");
                 }
             }
 

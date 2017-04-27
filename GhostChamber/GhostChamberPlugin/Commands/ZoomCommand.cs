@@ -4,17 +4,27 @@ using Autodesk.AutoCAD.Runtime;
 
 namespace GhostChamberPlugin.Commands
 {
+    /**
+     * ZoomCommand runs the Zoom command using the calculated values from ZoomGesture.
+     */
 	public class ZoomCommand
 	{
-		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);
-		private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;
+		private Camera camera = new Camera(Application.DocumentManager.MdiActiveDocument);  /**< The camera object that this class uses to pan. */
+        private Editor editor = Application.DocumentManager.MdiActiveDocument.Editor;       /**< The AutoCAD Editor currently in use. */
 
-		public void Do(double zoomFactor)
+        /**
+         * Performs the Zoom command using the camera object.
+         * @param zoomFactor the factor to zoom to the object by.
+         */
+        public void Do(double zoomFactor)
 		{
 			camera.Zoom(zoomFactor);
 		}
 
-		[CommandMethod("GHOSTCHAMBER", "GHOSTZOOM", CommandFlags.Modal)]
+        /**
+         * Exposed method to AutoCAD to run the command directly.
+         */
+        [CommandMethod("GHOSTCHAMBER", "GHOSTZOOM", CommandFlags.Modal)]
 		public void Command()
 		{
 			double zoomFactor = double.Parse(editor.GetString("Zoom Factor: ").StringResult);

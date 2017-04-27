@@ -4,13 +4,15 @@ using Autodesk.AutoCAD.ApplicationServices;
 
 namespace GhostChamberPlugin.Utilities
 {
+    /**
+     * Class of Util methods for the Gestures.
+     * @static
+     */
     public static class GestureUtils
     {
-        public const double CLAMP_THRESHOLD = 0.09;
-        public const double CAPTURE_THRESHOLD = 0.2;
-        public const double CAPTURE_DEPTH_OFFSET = 0.4;
+        public const double CAPTURE_THRESHOLD = 0.2;            /**< Default threshold to check if limb is above shoulder height. */
 
-        //Currently unused, but useful.
+        /** Currently unused, but useful. May be used in future expansion of project */
         public static double GetJointDistance(Joint j1, Joint j2)
         {
             double dX = j1.Position.X - j2.Position.X;
@@ -20,7 +22,7 @@ namespace GhostChamberPlugin.Utilities
             return Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
         }
 
-        //Currently unused.
+        /** Currently unused, but useful. May be used in future expansion of project */
         internal static bool isJointLessThan(Body activeBody, JointType jointA, JointType jointB)
         {
             if (activeBody.Joints[jointA].Position.X <= activeBody.Joints[jointB].Position.X)
@@ -36,6 +38,7 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
+        /** Currently unused. */
         internal static bool isCommandPositionActive(Body activeBody, float threshhold)
         {
             if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold &&
@@ -46,13 +49,20 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
-        //Currently unused
+        /** Currently unused, but useful. May be used in future expansion of project */
         internal static void ReleaseGesture(Body activeBody)
         {
             activeBody = null;
         }
 
-        //Used by Pan Gesture
+        /** 
+         * @static
+         * @deprecated
+         * Used by Pan Gesture. Used to check if the Right Hand is above the shoulder.
+         * @param activeBody Kinect.Body value of the body being detected.
+         * @param threshold value to check Y position relative to Head.
+         * @return true if Right Hand is less than the threshold in the Y from Head.
+         */
         internal static bool IsToolPositionActive(Body activeBody, float threshhold)
         {
             if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold)
@@ -63,6 +73,12 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
+        /**
+         * @static
+         * Check if Grab gesture is Active.
+         * @param body Kinect.Body currently being detected.
+         * @return true if left hand is above shoulder height and the hand is grabbing.
+         */
         internal static bool IsGrabGestureActive(Body body)
         {
             if (body.Joints[JointType.Head].Position.Y == 0.0f)
@@ -78,6 +94,12 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
+        /**
+         * @static
+         * Check if Orbit gesture is Active.
+         * @param body Kinect.Body currently being detected.
+         * @return true if right hand is above shoulder height and the hand is grabbing.
+         */
         internal static bool IsOrbitGestureActive(Body body)
         {
             if (body.Joints[JointType.Head].Position.Y == 0.0f)
@@ -93,6 +115,12 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
+        /**
+         * @static
+         * Check if Zoom gesture is Active.
+         * @param body Kinect.Body currently being detected.
+         * @return true if Left and right hands are above shoulder height.
+         */
         internal static bool IsZoomGestureActive(Body body)
         {
             if (body.Joints[JointType.Head].Position.Y == 0.0f)
@@ -109,6 +137,12 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
+        /**
+         * @static
+         * Check if SnapBack gesture is Active.
+         * @param body Kinect.Body currently being detected.
+         * @return true if Left hand is above the shoulder height and the hand is grabbing.
+         */
         internal static bool IsSnapBackGestureActive(Body body)
         {
             

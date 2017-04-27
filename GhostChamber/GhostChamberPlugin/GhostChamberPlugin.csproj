@@ -124,7 +124,6 @@
     <Compile Include="Experiments\BodyTracker.cs" />
     <Compile Include="Experiments\BoundingBox.cs" />
     <Compile Include="Commands\Camera.cs" />
-    <Compile Include="FingerDetection\FingerTracker.cs" />
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureType.cs" />
     <Compile Include="Gestures\GrabGesture.cs" />

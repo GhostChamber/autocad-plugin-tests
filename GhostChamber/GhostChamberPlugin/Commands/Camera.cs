@@ -5,92 +5,123 @@ using System;
 
 namespace GhostChamberPlugin.Commands
 {
+    /**
+     * The Camera class is used to perform any view transformations on the current document.
+     * It communicates directly with AutoCAD to perform the four commands that we support -
+     *      Grab
+     *      SnapBack
+     *      Orbit
+     *      Zoom
+     */
 	public class Camera
 	{
 		// Members
-		private Document _doc = null;
-		private ViewTableRecord _vtr = null;
-		private ViewTableRecord _initial = null;
+		private Document document = null;                       /**< The document currently being viewed. */
+		private ViewTableRecord vTableRecord = null;            /**< The current view being used. */
+		private ViewTableRecord initialTableRecord = null;      /**< The view before performing any camera operations. */
 
+        /**
+         * Constructor for Camera class. Initializes all member variables.
+         * @param doc the Document to use the Camera on. Generally, this is the current document being used in AutoCAD.
+         */
 		public Camera(Document doc)
 		{
-			_doc = doc;
-			_initial = doc.Editor.GetCurrentView();
-			_vtr = (ViewTableRecord)_initial.Clone();
+			document = doc;
+			initialTableRecord = document.Editor.GetCurrentView();
+			vTableRecord = (ViewTableRecord)initialTableRecord.Clone();
 		}
 
-		// Reset to the initial view
+		/**
+         *  Reset to the initial view
+         */
 		public void Reset()
 		{
-			_doc.Editor.SetCurrentView(_initial);
-			_doc.Editor.Regen();
+			document.Editor.SetCurrentView(initialTableRecord);
+			document.Editor.Regen();
 		}
 
-		// Zoom in or out
+		/** 
+         * Zoom in or out.
+         * @param factor the factor to zoom in or out by.
+         */
 		public void Zoom(double factor)
 		{
-            _vtr = _doc.Editor.GetCurrentView();
+            vTableRecord = document.Editor.GetCurrentView();
 
             // Adjust the ViewTableRecord
-            _vtr.Height *= factor;
-			_vtr.Width *= factor;
+            vTableRecord.Height *= factor;
+			vTableRecord.Width *= factor;
 
 			// Set it as the current view
-			_doc.Editor.SetCurrentView(_vtr);
+			document.Editor.SetCurrentView(vTableRecord);
 
 			// Zoom requires a regen for the gizmos to update
-			_doc.Editor.Regen();
+			document.Editor.Regen();
 		}
 
-		// Pan in the specified direction
+		/** 
+         * Pan in the specified direction.
+         * @param leftRight amount of movement along the X-axis.
+         * @param upDown amount of movement along the Y-axis.
+         */
 		public void Pan(double leftRight, double upDown)
 		{
-            _vtr = _doc.Editor.GetCurrentView();
+            vTableRecord = document.Editor.GetCurrentView();
 
             // Adjust the ViewTableRecord
-            _vtr.CenterPoint = _vtr.CenterPoint + new Vector2d(leftRight, upDown);
+            vTableRecord.CenterPoint = vTableRecord.CenterPoint + new Vector2d(leftRight, upDown);
 
 			// Set it as the current view
-			_doc.Editor.SetCurrentView(_vtr);
+			document.Editor.SetCurrentView(vTableRecord);
 		}
 
-		// Orbit by angle around axis
+		/** 
+         * Orbit by angle around axis. 
+         * @param axis the axis along which to rotate.
+         * @param angle the angle to rotate by
+         */
 		public void Orbit(Vector3d axis, double angle)
 		{
             // Adjust the ViewTableRecord
-            _vtr = _doc.Editor.GetCurrentView();
+            vTableRecord = document.Editor.GetCurrentView();
 
-            _vtr.ViewDirection = _vtr.ViewDirection.TransformBy(Matrix3d.Rotation(angle, axis, Point3d.Origin));
+            vTableRecord.ViewDirection = vTableRecord.ViewDirection.TransformBy(Matrix3d.Rotation(angle, axis, Point3d.Origin));
 			// Set it as the current view
 
-            _doc.Editor.SetCurrentView(_vtr);
+            document.Editor.SetCurrentView(vTableRecord);
         }
 
+        /**
+         * Accessor for Current Camera Width.
+         * @return returns double value of the CameraWidth.
+         */
         public double GetCameraWidth()
         {
-            _vtr = _doc.Editor.GetCurrentView();
-            return _vtr.Width;
+            vTableRecord = document.Editor.GetCurrentView();
+            return vTableRecord.Width;
         }
 
+        /**
+         * Accessor for the Current Camera Height.
+         * @return returns the double value of the Camera Height.
+         */
         public double GetCameraHeight()
         {
-            _vtr = _doc.Editor.GetCurrentView();
-            return _vtr.Width;
+            vTableRecord = document.Editor.GetCurrentView();
+            return vTableRecord.Width;
         }
 
+        /**
+         * If the model is out of view, brings the model back to the centre of the camera focus.
+         */
         public void SnapBackInView()
         {
-            _vtr = _doc.Editor.GetCurrentView();
-            double distanceX = Point2d.Origin.X - _vtr.CenterPoint.X;
-            double distanceY = Point2d.Origin.Y - _vtr.CenterPoint.Y;
-            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DistanceX = {0}\n", distanceX);
-            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("DistanceY= {0}\n", distanceY);
-            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Width= {0}\n", (_vtr.Width) / 2);
-            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Height= {0}\n", (_vtr.Height)/2);
+            vTableRecord = document.Editor.GetCurrentView();
+            double distanceX = Point2d.Origin.X - vTableRecord.CenterPoint.X;
+            double distanceY = Point2d.Origin.Y - vTableRecord.CenterPoint.Y;
 
-            if ((Math.Abs(distanceX) > (_vtr.Width/2)) || (Math.Abs(distanceY) > (_vtr.Height/2)))
+            if ((Math.Abs(distanceX) > (vTableRecord.Width/2)) || (Math.Abs(distanceY) > (vTableRecord.Height/2)))
             {
-                Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("SNAP_BACK working\n");
                 Pan(distanceX, distanceY);
             }
         }

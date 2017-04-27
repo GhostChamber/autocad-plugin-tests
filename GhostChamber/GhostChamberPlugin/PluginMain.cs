@@ -11,7 +11,7 @@ using Microsoft.Kinect;
 namespace GhostChamberPlugin
 {
     /**
-     * The PluginMain class extends DrawJig and IDisposable. This class is the entry point to the plugin.
+     * The PluginMain class extends DrawJig and IDisposable. This class acts as our stand-in for a main method.
      */
     class PluginMain : DrawJig, IDisposable
 	{
@@ -67,81 +67,96 @@ namespace GhostChamberPlugin
 			messenger.ConnectToListener();
 		}
 
-		protected override SamplerStatus Sampler(JigPrompts prompts)
-		{
-			// We don't really need a point, but we do need some
-			// user input event to allow us to loop, processing
-			// for the Kinect input
-			var opts = new JigPromptPointOptions("\nClick to finish: ");
-			opts.Cursor = CursorType.Invisible;
-			var ppr = prompts.AcquirePoint(opts);
-			if (ppr.Status == PromptStatus.OK)
-			{
-				if (currentGesture == GestureType.NONE)
-				{
-					foreach (var binding in gestureMapping)
-					{
-						if (binding.Value.IsGestureActive(skeletons, kinect.BodyFrameSource.BodyCount))
-						{
-							currentGesture = binding.Key;
-							messenger.SendGestureMessage(currentGesture);
-							break;
-						}
-					}
-				}
+        /**
+         * Sampler is the concrete (non abstract) implementation of the Jig.Sampler method.
+         * This method will be called in the PluginMain via the Drag method of the Application.DocumentManager.MdiActiveDocument.Editor
+         * The method checks which gesture, if any, is being performed and calls the update on the corresponding gesture.
+         * @param prompts is the JigPrompts object that is used to prompt the editor to refresh the jig.
+         * @return SamplerStatus enumerable type OK if prompt status found.
+         */
+        protected override SamplerStatus Sampler(JigPrompts prompts)
+        {
+            // We don't really need a point, but we do need some
+            // user input event to allow us to loop, processing
+            // for the Kinect input
+            var opts = new JigPromptPointOptions("\nClick to finish: ");
+            opts.Cursor = CursorType.Invisible;
+            var ppr = prompts.AcquirePoint(opts);
+            if (ppr.Status == PromptStatus.OK)
+            {
+                if (currentGesture == GestureType.NONE)
+                {
+                    foreach (var binding in gestureMapping)
+                    {
+                        if (binding.Value.IsGestureActive(skeletons, kinect.BodyFrameSource.BodyCount))
+                        {
+                            currentGesture = binding.Key;
+                            messenger.SendGestureMessage(currentGesture);
+                            break;
+                        }
+                    }
+                }
 
-				if (currentGesture != GestureType.NONE)
-				{
-					gestureMapping[currentGesture].Update(skeletons, kinect.BodyFrameSource.BodyCount);
-					if (!gestureMapping[currentGesture].IsGestureActive(skeletons, kinect.BodyFrameSource.BodyCount))
-					{
-						currentGesture = GestureType.NONE;
-						messenger.SendGestureMessage(currentGesture);
-					}
-				}
+                if (currentGesture != GestureType.NONE)
+                {
+                    gestureMapping[currentGesture].Update(skeletons, kinect.BodyFrameSource.BodyCount);
+                    if (!gestureMapping[currentGesture].IsGestureActive(skeletons, kinect.BodyFrameSource.BodyCount))
+                    {
+                        currentGesture = GestureType.NONE;
+                        messenger.SendGestureMessage(currentGesture);
+                    }
+                }
 
-				var frame = frameReader.AcquireLatestFrame();
-				if (frame != null)
-				{
-					using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
-					{
-						if (bodyFrame != null)
-						{
-							if (skeletons == null)
-							{
-								skeletons = new Body[kinect.BodyFrameSource.BodyCount];
-							}
-							bodyFrame.GetAndRefreshBodyData(skeletons);
-						}
-					}
-				}
+                var frame = frameReader.AcquireLatestFrame();
+                if (frame != null)
+                {
+                    using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
+                    {
+                        if (bodyFrame != null)
+                        {
+                            if (skeletons == null)
+                            {
+                                skeletons = new Body[kinect.BodyFrameSource.BodyCount];
+                            }
+                            bodyFrame.GetAndRefreshBodyData(skeletons);
+                        }
+                    }
+                }
 
-				// Set the cursor without actually moving it - enough to
-				// generate a Windows message
-				var pt = System.Windows.Forms.Cursor.Position;
-				System.Windows.Forms.Cursor.Position = new System.Drawing.Point(pt.X, pt.Y);
-				return SamplerStatus.OK;
-			}
-			return SamplerStatus.Cancel;
-		}
+                // Set the cursor without actually moving it - enough to
+                // generate a Windows message
+                var pt = System.Windows.Forms.Cursor.Position;
+                System.Windows.Forms.Cursor.Position = new System.Drawing.Point(pt.X, pt.Y);
+                return SamplerStatus.OK;
+            }
+            return SamplerStatus.Cancel;
+        }
 
-		protected override bool WorldDraw(WorldDraw draw)
-		{
-			// Do nothing
-			return true;
-		}
+        /**
+         * Abstract method implementation of DrawJig.WorldDraw. This method implementation makes the class concrete(not abstract).
+         * @param draw is an AutoCAD.GraphicsInterface.WorldDraw object that is not used for anything.
+         * @return returns bool true everytime.
+         */
+        protected override bool WorldDraw(WorldDraw draw)
+        {
+            // Do nothing
+            return true;
+        }
 
-		public void Dispose()
-		{
-			// Uninitialise the Kinect sensor
-			if (kinect != null)
-			{
-				kinect.Close();
-			}
+        /**
+         * Abstract method implementation of IDisposable.Disposable. This method implementation makes the class concrete(not abstract).
+         */
+        public void Dispose()
+        {
+            // Uninitialise the Kinect sensor
+            if (kinect != null)
+            {
+                kinect.Close();
+            }
 
-			messenger.DisconnectFromListener();
-		}
-	}
+            messenger.DisconnectFromListener();
+        }
+    }
 
     /**
      * GhostCommands is the entry point of the plugin application and is invoked by the command 'GHHOSTGO' from the AutoCAD editor. 
