@@ -49,8 +49,7 @@ namespace GhostChamberPlugin.Gestures
 				// kinect units are in meters. Hence left - right is scaled from minHandDistance to maxHandDistance
 				double handDistance = (zoomRightStart - zoomRight);
 
-                bool zoomOut = handDistance > 0;
-
+                bool zoomOut = (handDistance < 0);
                 handDistance = Math.Abs(handDistance);
 				handDistance = handDistance.Clamp(minHandDistance, maxHandDistance);
 

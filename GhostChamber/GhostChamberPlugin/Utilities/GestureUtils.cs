@@ -21,13 +21,13 @@ namespace GhostChamberPlugin.Utilities
         }
 
         //Currently unused.
-        internal static bool isJointLessThan( Body activeBody, JointType jointA, JointType jointB )
+        internal static bool isJointLessThan(Body activeBody, JointType jointA, JointType jointB)
         {
-            if(activeBody.Joints[jointA].Position.X <= activeBody.Joints[jointB].Position.X)
+            if (activeBody.Joints[jointA].Position.X <= activeBody.Joints[jointB].Position.X)
             {
-                if(activeBody.Joints[jointA].Position.Y <= activeBody.Joints[jointB].Position.Y)
+                if (activeBody.Joints[jointA].Position.Y <= activeBody.Joints[jointB].Position.Y)
                 {
-                    if(activeBody.Joints[jointA].Position.Z <= activeBody.Joints[jointB].Position.Z)
+                    if (activeBody.Joints[jointA].Position.Z <= activeBody.Joints[jointB].Position.Z)
                     {
                         return true;
                     }
@@ -36,9 +36,9 @@ namespace GhostChamberPlugin.Utilities
             return false;
         }
 
-        internal static bool isCommandPositionActive( Body activeBody, float threshhold )
+        internal static bool isCommandPositionActive(Body activeBody, float threshhold)
         {
-            if(Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold &&
+            if (Math.Abs(activeBody.Joints[JointType.HandLeft].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold &&
                activeBody.Joints[JointType.HandLeft].Position.Z < activeBody.Joints[JointType.Head].Position.Z - 0.4)
             {
                 return true;
@@ -53,9 +53,9 @@ namespace GhostChamberPlugin.Utilities
         }
 
         //Used by Pan Gesture
-        internal static bool IsToolPositionActive( Body activeBody, float threshhold )
+        internal static bool IsToolPositionActive(Body activeBody, float threshhold)
         {
-            if(Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold)
+            if (Math.Abs(activeBody.Joints[JointType.HandRight].Position.Y - activeBody.Joints[JointType.Head].Position.Y) < threshhold)
             {
                 return true;
             }
@@ -70,8 +70,8 @@ namespace GhostChamberPlugin.Utilities
                 return false;
             }
 
-            if (Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) > GestureUtils.CAPTURE_THRESHOLD // check if hand is above the shoulder
-                        && body.HandLeftState == HandState.Closed)
+            if (Math.Abs(body.Joints[JointType.HandLeft].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD
+                && body.HandLeftState == HandState.Closed)
             {
                 return true;
             }
@@ -85,7 +85,7 @@ namespace GhostChamberPlugin.Utilities
                 return false;
             }
 
-            if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD
+            if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < CAPTURE_THRESHOLD
                 && body.HandRightState == HandState.Closed)
             {
                 return true;
@@ -106,6 +106,22 @@ namespace GhostChamberPlugin.Utilities
                 return true;
             }
 
+            return false;
+        }
+
+        internal static bool IsSnapBackGestureActive(Body body)
+        {
+            
+            if (body.Joints[JointType.Head].Position.Y == 0.0f)
+            {
+                return false;
+            }
+
+            if (Math.Abs(body.Joints[JointType.HandRight].Position.Y - body.Joints[JointType.Head].Position.Y) < GestureUtils.CAPTURE_THRESHOLD
+                && body.HandRightState == HandState.Lasso)
+            {
+                return true;
+            }
             return false;
         }
     }
